@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List
 from app.models.note import Note, get_my_notes, get_count_notes, get_all_notes, get_note_by_id, get_notes_by_doc, insert_note, delete_note, update_note
-from app.utils.auth_dep import require_roles
+from app.utils.auth_dep import require_roles, get_current_user
 from fastapi import Depends
 from app.schemas.note import NoteCreate, NoteUpdate, NoteOut
 from uuid import UUID
@@ -36,10 +36,10 @@ async def list_my_notes(uuid: UUID):
     return [serialize(note) for note in notes]
 
 @router.post("", response_model=NoteOut, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def add_note(note: NoteCreate):
+async def add_note(note: NoteCreate, current_user = Depends(get_current_user)):
     new_note = insert_note(
         doc_id=note.doc_id,
-        user_id=note.user_id,
+        user_id=current_user.id,
         content=note.content,
         is_pinned=note.is_pinned
     )

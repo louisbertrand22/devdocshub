@@ -12,7 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 export default function DocForm({ onCreated }: { onCreated?: () => void }) {
   const { apiBase, token } = useAuth();
   const { toast } = useToast();
-  const [form, setForm] = useState({ title: "", slug: "", content: "", tags: "" });
+  const [form, setForm] = useState({ title: "", slug: "", content: "", tech: "" });
   const [submitting, setSubmitting] = useState(false);
 
   const submit = async () => {
@@ -22,11 +22,11 @@ export default function DocForm({ onCreated }: { onCreated?: () => void }) {
         title: form.title,
         slug: form.slug,
         content: form.content,
+        tech: form.tech,
       };
-      if (form.tags.trim()) payload.tags = form.tags.split(",").map((t) => t.trim());
       await apiFetch("/docs/add", { method: "POST", body: JSON.stringify(payload) }, apiBase, token);
       toast({ title: "Document created" });
-      setForm({ title: "", slug: "", content: "", tags: "" });
+      setForm({ title: "", slug: "", content: "", tech: "" });
       onCreated?.();
     } catch (e: any) {
       toast({ title: "Create failed", description: e.message, variant: "destructive" });
@@ -50,8 +50,8 @@ export default function DocForm({ onCreated }: { onCreated?: () => void }) {
         <Textarea rows={6} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} placeholder="# Intro..." />
       </div>
       <div className="grid gap-1">
-        <Label>Tags (comma-separated)</Label>
-        <Input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="backend, python" />
+        <Label>Tech</Label>
+        <Input value={form.tech} onChange={(e) => setForm({ ...form, tech: e.target.value })} placeholder="python, javascript, etc." />
       </div>
       <div>
         <Button onClick={submit} disabled={submitting}>{submitting ? "Saving..." : "Create"}</Button>

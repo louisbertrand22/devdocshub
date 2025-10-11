@@ -80,8 +80,7 @@ def create_new_collection(
 # --- Helpers ---
 
 def _ensure_owner_or_admin(collection: Collection, current_user: User):
-    roles = getattr(current_user, "roles", []) or []
-    is_admin = ("admin" in roles) if isinstance(roles, (list, set, tuple)) else roles == "admin"
+    is_admin = current_user.role == "admin"
     if collection.owner_id != current_user.id and not is_admin:
         raise HTTPException(status_code=403, detail="Not allowed")
 

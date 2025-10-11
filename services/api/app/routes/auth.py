@@ -58,6 +58,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_session)):
 
 
 @router.get("/me")
-def me(user = Depends(get_current_user)):
+def me(user: User = Depends(get_current_user)):
     """Renvoie les infos de l'utilisateur connecté à partir du JWT"""
-    return {"user": user}
+    from app.models.user import serialize
+    return {"user": serialize(user)}
