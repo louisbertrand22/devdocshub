@@ -1,0 +1,364 @@
+/* AppHeader Styles */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.app-header:hover {
+  border-bottom-color: rgba(229, 231, 235, 1);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.dark .app-header {
+  background: rgba(17, 24, 39, 0.8);
+  border-bottom-color: rgba(55, 65, 81, 0.8);
+}
+
+.dark .app-header:hover {
+  background: rgba(17, 24, 39, 0.95);
+  border-bottom-color: rgba(55, 65, 81, 1);
+}
+
+/* Container */
+.app-header__container {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  gap: 1rem;
+}
+
+/* Brand */
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-header__menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.app-header__menu-btn:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.dark .app-header__menu-btn:hover {
+  background: #374151;
+  color: #f9fafb;
+}
+
+@media (max-width: 768px) {
+  .app-header__menu-btn {
+    display: flex;
+  }
+}
+
+.app-header__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-header__logo-icon {
+  font-size: 1.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.app-header__logo-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (max-width: 640px) {
+  .app-header__logo-text {
+    display: none;
+  }
+}
+
+/* Actions */
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Search */
+.app-header__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.app-header__search:hover {
+  border-color: #d1d5db;
+  background: #fff;
+}
+
+.app-header__search:focus-within {
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dark .app-header__search {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark .app-header__search:hover {
+  background: #111827;
+  border-color: #4b5563;
+}
+
+.dark .app-header__search:focus-within {
+  border-color: #3b82f6;
+  background: #111827;
+}
+
+@media (max-width: 768px) {
+  .app-header__search {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-header__search {
+    display: none;
+  }
+}
+
+.app-header__search-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.app-header__search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.875rem;
+  color: #111827;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.app-header__search-input::placeholder {
+  color: #9ca3af;
+}
+
+.dark .app-header__search-input {
+  color: #f9fafb;
+}
+
+.app-header__search-kbd {
+  padding: 0.125rem 0.375rem;
+  font-size: 0.75rem;
+  font-family: ui-monospace, monospace;
+  color: #6b7280;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  flex-shrink: 0;
+}
+
+.dark .app-header__search-kbd {
+  background: #374151;
+  border-color: #4b5563;
+  color: #9ca3af;
+}
+
+/* Icon buttons */
+.app-header__icon-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .app-header__icon-btn {
+    display: none;
+  }
+}
+
+.app-header__notification-badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: white;
+  background: #ef4444;
+  border-radius: 9999px;
+  border: 2px solid white;
+}
+
+.dark .app-header__notification-badge {
+  border-color: #111827;
+}
+
+.app-header__theme-icon {
+  font-size: 1.125rem;
+  transition: transform 0.3s ease;
+}
+
+.app-header__icon-btn:hover .app-header__theme-icon {
+  transform: rotate(180deg);
+}
+
+/* User */
+.app-header__user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.app-header__user:hover {
+  background: #f3f4f6;
+}
+
+.dark .app-header__user:hover {
+  background: #374151;
+}
+
+.app-header__user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.125rem;
+}
+
+@media (max-width: 768px) {
+  .app-header__user-info {
+    display: none;
+  }
+}
+
+.app-header__username {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.dark .app-header__username {
+  color: #f9fafb;
+}
+
+.app-header__user-role {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.app-header__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.app-header__avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.app-header__logout {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.app-header__user:hover .app-header__logout {
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .app-header__logout {
+    opacity: 1;
+  }
+}
+
+.app-header__login-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.app-header__login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.app-header__login-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .app-header__login-btn span {
+    display: none;
+  }
+}

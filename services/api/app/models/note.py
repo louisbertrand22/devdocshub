@@ -61,3 +61,7 @@ def get_notes_by_user(user_id):
 def get_all_notes():
     session = next(get_session())
     return session.query(Note).all()
+
+def get_count_notes():
+    session = next(get_session())
+    return session.query(Note).count()

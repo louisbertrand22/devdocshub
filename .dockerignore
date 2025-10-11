@@ -1,0 +1,15 @@
+node_modules
+pnpm-debug.log
+npm-debug.log
+dist
+.next
+.vscode
+.DS_Store
+coverage
+**/__tests__/
+**/*.spec.*
+**/*.test.*
+.git
+.gitignore
+.env*
+!apps/web/.env.example

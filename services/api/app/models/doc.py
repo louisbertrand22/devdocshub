@@ -1,5 +1,6 @@
+from app.models.user import User
 from sqlalchemy import Column, String, DateTime, ForeignKey, Text
-from typing import Optional, List
+from typing import Collection, Optional, List
 from sqlalchemy.orm import relationship
 from fastapi import HTTPException
 from datetime import datetime
@@ -47,3 +48,7 @@ def add_doc(slug: str, title: str, tech: str, content: str):
 def get_doc_by_slug(slug: str):
     session = next(get_session())
     return session.query(Doc).filter(Doc.slug == slug).first()
+
+def get_count_docs() -> List[Doc]:
+    session = next(get_session())
+    return session.query(Doc).all()
