@@ -1,11 +1,22 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Optional
 from typing import List
-from app.models.doc import get_all_docs, get_doc_by_id, add_doc, DocOut, DocCreate, serialize, get_doc_by_slug
+from app.models.doc import get_all_docs, get_doc_by_id, add_doc, get_doc_by_slug, Doc
+from uuid import UUID
+from app.schemas.doc import DocCreate, DocOut
 
 from app.utils.auth_dep import require_roles
 
 router = APIRouter()
+
+def serialize(doc: Doc) -> DocOut:
+    return DocOut(
+        id=str(doc.id),
+        slug=doc.slug,
+        title=doc.title,
+        tech=doc.tech,
+        content=doc.content or "",
+    )
 
 
 @router.get("/all", dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
@@ -24,7 +35,7 @@ def list_docs(
     return [serialize(d) for d in items]
 
 @router.get("/doc/{doc_id}", dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def get_doc(doc_id: int):
+async def get_doc(doc_id: UUID):
     doc = get_doc_by_id(doc_id)
     if not doc:
         raise HTTPException(status_code=404, detail="Document introuvable")

@@ -4,6 +4,7 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from typing import Optional
 from app.utils.auth_dep import get_current_user
+from app.utils.limits import enforce_login_rate
 
 from app.db.session import get_session
 from app.models.user import User
@@ -46,7 +47,7 @@ def register(payload: RegisterRequest, db: Session = Depends(get_session)):
 
     return {"message": "Utilisateur créé avec succès", "email": u.email}
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse, dependencies=[Depends(enforce_login_rate)])
 def login(payload: LoginRequest, db: Session = Depends(get_session)):
     user = db.query(User).filter(User.email == payload.email).first()
     if not user or not security.verify_password(payload.password, user.password_hash):

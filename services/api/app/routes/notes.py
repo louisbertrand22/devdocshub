@@ -1,22 +1,59 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List
+from app.models.note import Note, get_all_notes, get_note_by_id, get_notes_by_doc, insert_note, delete_note, update_note
+from app.utils.auth_dep import require_roles
+from fastapi import Depends
+from app.schemas.note import NoteCreate, NoteUpdate, NoteOut
+from uuid import UUID
 
 router = APIRouter()
 
-class Note(BaseModel):
-    id: int
-    doc_id: int
-    content: str
+def serialize(note: Note) -> NoteOut:
+    return NoteOut(
+        id=str(note.id),
+        doc_id=str(note.doc_id),
+        user_id=str(note.user_id),
+        content=note.content,
+        created_at=note.created_at.isoformat() if note.created_at else None,
+    )
 
-FAKE_NOTES = [Note(id=1, doc_id=1, content="Rappel important sur la config")]
-
-@router.get("/", response_model=List[Note])
+@router.get("", response_model=List[NoteOut], dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
 async def list_notes():
-    return FAKE_NOTES
+    notes = get_all_notes()
+    return [serialize(note) for note in notes]
 
-@router.post("/", response_model=Note)
-async def add_note(note: Note):
-    note.id = len(FAKE_NOTES) + 1
-    FAKE_NOTES.append(note)
-    return note
+@router.post("", response_model=NoteOut, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+async def add_note(note: NoteCreate):
+    new_note = insert_note(
+        doc_id=note.doc_id,
+        user_id=note.user_id,
+        content=note.content
+    )
+    return serialize(new_note)
+
+@router.get("/doc/{doc_id}/notes", response_model=List[NoteOut], dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+async def list_notes_by_doc(doc_id: UUID):
+    notes = get_notes_by_doc(doc_id)
+    return [serialize(note) for note in notes]
+
+@router.delete("/{note_id}", status_code=204, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+async def remove_note(note_id: UUID, user_id: UUID):
+    success = delete_note(note_id, user_id)
+    if not success:
+        return {"detail": "Note not found or not authorized"}
+    return {"detail": "Note deleted successfully"}
+
+@router.put("/{note_id}", response_model=NoteOut, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+async def modify_note(note_id: UUID, user_id: UUID, content: str):
+    updated_note = update_note(note_id, user_id, content)
+    if not updated_note:
+        return {"detail": "Note not found or not authorized"}
+    return serialize(updated_note)
+
+@router.get("/{note_id}", response_model=NoteOut, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+async def get_note(note_id: UUID):
+    note = get_note_by_id(note_id)
+    if not note:
+        return {"detail": "Note not found"}
+    return serialize(note)

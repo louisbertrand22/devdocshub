@@ -1,16 +1,34 @@
 
 from sqlalchemy import Column, String, DateTime
-from sqlalchemy.dialects.postgresql import UUID
-import uuid
 from datetime import datetime
 from app.db.base import Base
+from sqlalchemy.dialects.postgresql import UUID as SAUUID
+import uuid
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(SAUUID, primary_key=True, index=True, default=uuid.uuid4)
     username = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False, index=True)
     password_hash = Column(String, nullable=False)
     role = Column(String, default="user")
     created_at = Column(DateTime, default=datetime.utcnow)
+
+def get_user_by_email(db_session, email: str):
+    return db_session.query(User).filter(User.email == email).first()
+
+def get_user_by_id(db_session, user_id: SAUUID):
+    return db_session.query(User).filter(User.id == user_id).first()
+
+def get_all_users(db_session):
+    return db_session.query(User).all()
+
+def serialize(user: User) -> dict:
+    return {
+        "id": str(user.id),
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "created_at": user.created_at.isoformat(),
+    }
