@@ -1,12 +1,19 @@
-from sqlalchemy import Column, String, ForeignKey, DateTime
+from sqlalchemy import Column, String, ForeignKey, DateTime, Table
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from typing import Iterable, Optional
 import uuid
 from datetime import datetime
 from app.db.base import Base
 from app.db.session import get_session
 from app.schemas.collection import CollectionCreate, CollectionUpdate
-from app.models.user import get_user_by_email
+
+collection_docs = Table(
+    "collection_docs",
+    Base.metadata,
+    Column("collection_id", UUID(as_uuid=True), ForeignKey("collections.id", ondelete="CASCADE"), primary_key=True),
+    Column("doc_id", UUID(as_uuid=True), ForeignKey("docs.id", ondelete="CASCADE"), primary_key=True),
+)
 
 class Collection(Base):
     __tablename__ = "collections"
@@ -16,6 +23,8 @@ class Collection(Base):
     description = Column(String)
     owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    docs = relationship("Doc", secondary=collection_docs, back_populates="collections")
 
 
 def list_collections(owner_id: Optional[UUID] = None, q: Optional[str] = None,

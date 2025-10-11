@@ -3,6 +3,8 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
+from .doc import DocMini
+from typing import List
 
 class CollectionBase(BaseModel):
     name: str = Field(..., min_length=1)
@@ -21,3 +23,7 @@ class CollectionOut(CollectionBase):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class CollectionWithDocs(CollectionOut):
+    docs: List[DocMini] = []
