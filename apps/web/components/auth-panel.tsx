@@ -123,22 +123,26 @@ export default function AuthPanel() {
   }, [token, apiBase, setUser]);
 
   return (
-    <div className="mx-auto grid w-full max-w-3xl gap-6">
+    <div className="mx-auto grid w-full max-w-2xl gap-6">
       {user ? (
-        <Card className="border-dashed">
-          <CardHeader className="flex-row items-center justify-between space-y-0">
-            <CardTitle className="flex items-center gap-3">
-              <UserIcon className="h-5 w-5" />
+        <Card className="border-dashed shadow-lg">
+          <CardHeader className="flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="flex items-center gap-3 text-lg">
+              <div className="rounded-full bg-green-100 p-2 dark:bg-green-900/30">
+                <UserIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
               Connecté
             </CardTitle>
-            <Badge variant="secondary">Session active</Badge>
+            <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+              Session active
+            </Badge>
           </CardHeader>
-          <CardContent className="flex items-center justify-between gap-4">
+          <CardContent className="flex items-center justify-between gap-4 pt-2">
             <div className="min-w-0">
               <p className="truncate text-sm text-muted-foreground">{user.email}</p>
               {user.name && <p className="text-base font-medium">{user.name}</p>}
             </div>
-            <Button variant="outline" onClick={doLogout}>
+            <Button variant="outline" onClick={doLogout} className="shrink-0">
               <LogOut className="mr-2 h-4 w-4" /> Se déconnecter
             </Button>
           </CardContent>
@@ -146,15 +150,18 @@ export default function AuthPanel() {
       ) : (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Se connecter</TabsTrigger>
               <TabsTrigger value="register">Créer un compte</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Bienvenue 👋</CardTitle>
+              <Card className="shadow-lg border-2">
+                <CardHeader className="space-y-1 pb-4">
+                  <CardTitle className="text-2xl">Bienvenue 👋</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Entrez vos identifiants pour accéder à votre compte
+                  </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {errors?.login && (
@@ -218,9 +225,12 @@ export default function AuthPanel() {
             </TabsContent>
 
             <TabsContent value="register">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Créer votre compte</CardTitle>
+              <Card className="shadow-lg border-2">
+                <CardHeader className="space-y-1 pb-4">
+                  <CardTitle className="text-2xl">Créer votre compte</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Rejoignez DevDocsHub et organisez vos documents
+                  </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {errors?.register && (
