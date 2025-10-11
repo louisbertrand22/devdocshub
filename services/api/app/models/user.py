@@ -3,6 +3,7 @@ from sqlalchemy import Column, String, DateTime
 from datetime import datetime
 from app.db.base import Base
 from sqlalchemy.dialects.postgresql import UUID as SAUUID
+from app.db.session import get_session
 import uuid
 
 class User(Base):
@@ -15,13 +16,16 @@ class User(Base):
     role = Column(String, default="user")
     created_at = Column(DateTime, default=datetime.utcnow)
 
-def get_user_by_email(db_session, email: str):
+def get_user_by_email(email: str):
+    db_session = next(get_session())
     return db_session.query(User).filter(User.email == email).first()
 
-def get_user_by_id(db_session, user_id: SAUUID):
+def get_user_by_id(user_id: SAUUID):
+    db_session = next(get_session())
     return db_session.query(User).filter(User.id == user_id).first()
 
-def get_all_users(db_session):
+def get_all_users():
+    db_session = next(get_session())
     return db_session.query(User).all()
 
 def serialize(user: User) -> dict:

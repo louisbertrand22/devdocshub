@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes import auth
-from app.routes import docs, notes, users
+from app.routes import docs, notes, users, collections
 from app.db.init_db import init_db
 
 app = FastAPI(title="DevDocsHub API", version="1.0.0")
@@ -39,6 +39,7 @@ app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(docs.router, prefix="/docs", tags=["Docs"])
 app.include_router(notes.router, prefix="/notes", tags=["Notes"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
+app.include_router(collections.router, prefix="/collections", tags=["Collections"])
 
 @app.get("/", tags=["Root"])
 def root():
