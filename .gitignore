@@ -1,38 +1,58 @@
-node_modules
+# =====================================================
+# Dependencies
+# =====================================================
+node_modules/
+.pnp.*
+.pnp.js
 
-apps/web/.next
+# =====================================================
+# Build outputs
+# =====================================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.turbo/
+*.tsbuildinfo
 
-apps/web/.turbo
-apps/web/out
-apps/web/dist
-apps/web/build
-apps/web/.vercel
-apps/web/.vercel_build_output
-apps/web/.vercel_cache
-apps/web/.vercel_project_id
-apps/web/.vercel_org_id
-apps/web/.vercel_link
-apps/web/.vercel_env
+# =====================================================
+# Environment files
+# =====================================================
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-apps/web/.env
-apps/web/.env.local
-apps/web/.env.development.local
-apps/web/.env.test.local
-apps/web/.env.production.local
+# =====================================================
+# Python
+# =====================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+.tox/
+venv/
+env/
+ENV/
 
-apps/web/public/locales
-apps/web/.DS_Store
-apps/web/coverage
-apps/web/npm-debug.log*
-apps/web/yarn-debug.log*
-apps/web/yarn-error.log*
-apps/web/pnpm-debug.log*
-apps/web/.eslintcache
-apps/web/.nextlintcache
-
-apps/web/.vscode
-
-# Ignore IDE specific files
+# =====================================================
+# IDE / Editor
+# =====================================================
 .vscode/
 .idea/
 *.suo
@@ -42,47 +62,52 @@ apps/web/.vscode
 *.sw?
 .DS_Store
 Thumbs.db
-.env
-.env.local
-.env.*.local
+
+# =====================================================
+# Logs
+# =====================================================
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-lerna-debug.log*
-lerna-debug.log*
-*.log
-*.tsbuildinfo
-dist/
-build/
-tmp/
-temp/
-out/
+
+# =====================================================
+# Testing
+# =====================================================
 coverage/
-.cache/
-node_modules/
-.pnp.*
-.pnp.js
-.eslintcache
-.next/
-.nuxt/
-
-
-
-# Ignore test output
 test-output/
 test-results/
+.eslintcache
+.nextlintcache
 
-# Ignore production
-.production/
+# =====================================================
+# Temporary files
+# =====================================================
+tmp/
+temp/
+.cache/
+
+# =====================================================
+# Deployment
+# =====================================================
 .vercel/
 .vercel_build_output/
 .vercel_cache/
 .vercel_project_id
+.vercel_org_id
+.vercel_link
+.vercel_env
+.production/
 
-services/api/.env
-services/api/.env.local
-services/api/.env.development.local
-services/api/.env.test.local
-services/api/.env.production.local
+# =====================================================
+# Package manager lock files (keep pnpm-lock.yaml only)
+# =====================================================
+package-lock.json
+yarn.lock
+
+# =====================================================
+# Miscellaneous
+# =====================================================
+public/locales
