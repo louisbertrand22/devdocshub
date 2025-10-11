@@ -1,12 +1,12 @@
 from sqlalchemy import Column, String, ForeignKey, DateTime, Table
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from typing import Iterable, Optional
+from typing import Iterable, List, Optional
 import uuid
 from datetime import datetime
 from app.db.base import Base
 from app.db.session import get_session
-from app.schemas.collection import CollectionCreate, CollectionUpdate
+from app.schemas.collection import CollectionCreate, CollectionOut, CollectionUpdate
 
 collection_docs = Table(
     "collection_docs",
@@ -75,3 +75,7 @@ def delete_collection(collection_id: UUID) -> bool:
     db.delete(db_collection)
     db.commit()
     return True
+
+def get_count_collections() -> List[CollectionOut]:
+    session = next(get_session())
+    return session.query(Collection).all()

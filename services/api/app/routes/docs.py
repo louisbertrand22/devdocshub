@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Optional
 from typing import List
-from app.models.doc import get_all_docs, get_doc_by_id, add_doc, get_doc_by_slug, Doc
+from app.models.doc import get_all_docs, get_doc_by_id, add_doc, get_doc_by_slug, Doc, get_count_docs
 from uuid import UUID
 from app.schemas.doc import DocCreate, DocOut
-
+from app.models.user import User
 from app.utils.auth_dep import require_roles
 
 router = APIRouter()
@@ -18,6 +18,9 @@ def serialize(doc: Doc) -> DocOut:
         content=doc.content or "",
     )
 
+@router.get("/count", dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+async def count_docs():
+    return len(get_count_docs())
 
 @router.get("/all", dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
 async def list_docs():
@@ -34,7 +37,7 @@ def list_docs(
     items = get_all_docs(q=q, tech=tech, page=page, size=size)
     return [serialize(d) for d in items]
 
-@router.get("/doc/{doc_id}", dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+@router.get("/doc/{doc_id:uuid}", dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
 async def get_doc(doc_id: UUID):
     doc = get_doc_by_id(doc_id)
     if not doc:
@@ -49,7 +52,7 @@ def get_doc(slug: str):
     return serialize(doc)
 
 @router.post("/add", response_model=DocOut, status_code=status.HTTP_201_CREATED,
-             dependencies=[Depends(require_roles("maintainer", "admin"))])
+             dependencies=[Depends(require_roles("maintainer", "admin", "user"))])
 def create_doc(payload: DocCreate):
     new_doc = add_doc(
         slug=payload.slug,
@@ -58,3 +61,5 @@ def create_doc(payload: DocCreate):
         content=payload.content
     )
     return serialize(new_doc)
+
+
