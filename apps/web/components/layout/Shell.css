@@ -1,0 +1,200 @@
+/* Shell Layout Styles */
+
+/* Auth page layout */
+.shell-auth {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.dark .shell-auth {
+  background: #030712;
+}
+
+/* Main shell layout */
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.container-left {
+  max-width: 1280px;    /* ajuste: 1024 / 1200 / 1360 selon ton goût */
+  margin-right: auto;   /* ← pas de centrage: colle à gauche */
+  margin-left: 0;
+  width: 100%;
+  /* gutter à droite (et un peu à gauche aussi) */
+  padding-right: 1rem;
+  padding-left: 0.25rem;
+}
+
+.dark .shell {
+  background: #030712;
+}
+
+/* Sidebar */
+.shell__sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.95);
+  border-right: 1px solid rgba(229, 231, 235, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+}
+
+.dark .shell__sidebar {
+  background: rgba(17, 24, 39, 0.95);
+  border-right-color: rgba(55, 65, 81, 0.8);
+}
+
+/* Scrollbar styling for sidebar */
+.shell__sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.shell__sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.shell__sidebar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.dark .shell__sidebar::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.shell__sidebar-content {
+  padding: 0; /* Supprimé le padding ici */
+}
+
+/* Mobile sidebar hidden by default */
+@media (max-width: 1024px) {
+  .shell__sidebar {
+    transform: translateX(-100%);
+  }
+
+  .shell__sidebar--open {
+    transform: translateX(0);
+  }
+}
+
+/* Desktop sidebar always visible */
+@media (min-width: 1025px) {
+  .shell__sidebar {
+    position: sticky;
+    transform: translateX(0);
+  }
+  .container-left {
+    margin-right: 2rem;
+    padding-left: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-left {
+    padding-right: 1.5rem;
+    padding-left: 0.5rem;
+  }
+}
+
+/* Overlay for mobile */
+.shell__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (min-width: 1025px) {
+  .shell__overlay {
+    display: none;
+  }
+}
+
+/* Main content area */
+.shell__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+}
+
+@media (min-width: 1025px) {
+  .shell__main {
+    margin-left: 1.5rem 2rem;
+  }
+}
+
+/* Content */
+.shell__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.shell__content-inner {
+  flex: 1;
+  margin: 0;
+  max-width: 1360px;    /* ajuste: 1024 / 1200 / 1360 selon ton goût */
+  margin-right: auto;   /* ← pas de centrage: colle à gauche */
+  margin-left: 0;
+  width: 100%;
+  /* gutter à droite (et un peu à gauche aussi) */
+  padding-right: 1rem;
+  padding-left: 0.25rem;
+}
+
+@media (max-width: 640px) {
+  .shell__content-inner {
+    padding: 1rem 0.5rem;
+  }
+}
+
+/* Animations */
+@media (prefers-reduced-motion: no-preference) {
+  .shell__sidebar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .shell__overlay {
+    animation: fadeIn 0.2s ease;
+  }
+}
+
+/* Focus visible for accessibility */
+.shell__sidebar:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+/* Print styles */
+@media print {
+  .shell__sidebar {
+    display: none;
+  }
+
+  .shell__main {
+    margin-left: 0;
+  }
+}

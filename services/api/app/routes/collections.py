@@ -1,114 +1,188 @@
 from typing import List, Optional
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+
 from app.utils.auth_dep import require_roles, get_current_user
-from app.models.user import get_user_by_email
-from app.crud.collection_doc import add_doc_to_collection, remove_doc_from_collection, list_docs_in_collection
+from app.models.user import User  # get_user_by_email plus nécessaire ici
+from app.crud.collection_doc import (
+    add_doc_to_collection,
+    remove_doc_from_collection,
+    list_docs_in_collection,
+)
 from app.schemas.doc import DocMini
-
 from app.schemas.collection_doc import CollectionDocLink
-from app.schemas.collection import CollectionWithDocs
+from app.schemas.collection import (
+    CollectionCreate,
+    CollectionUpdate,
+    CollectionOut,
+    CollectionWithDocs,
+)
+from app.models.collection import (
+    Collection,
+    get_count_collections,
+    list_collections,
+    get_collection,
+    create_collection,
+    update_collection,
+    delete_collection,
+)
 
-from app.schemas.collection import CollectionCreate, CollectionUpdate, CollectionOut
-from app.models.collection import list_collections, get_collection, create_collection, update_collection, delete_collection
+router = APIRouter(
+)
 
-router = APIRouter()
+# --- Endpoints statiques AVANT les dynamiques ---
 
-@router.get("/", response_model=List[CollectionOut],
-            dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+@router.get(
+    "/count",
+    response_model=int,
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
+def count_collections():
+    """
+    Renvoie un entier (200: number) pour coller à ce qu'attend le frontend.
+    """
+    # get_count_collections() doit renvoyer un int.
+    # Si chez toi ça renvoie une liste, remplace par: return len(get_count_collections())
+    return len(get_count_collections())
+
+# --- Listing / création ---
+
+@router.get(
+    "/",
+    response_model=List[CollectionOut],
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
 def get_all_collections(
     q: Optional[str] = Query(None, description="Recherche plein texte"),
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
     only_mine: bool = Query(False, description="Ne lister que mes collections"),
-    current_user = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     owner_id = current_user.id if only_mine else None
     rows = list_collections(owner_id=owner_id, q=q, page=page, size=size)
     return rows
 
-@router.post("/", response_model=CollectionOut, status_code=status.HTTP_201_CREATED,
-             dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+
+@router.post(
+    "/",
+    response_model=CollectionOut,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
 def create_new_collection(
     collection: CollectionCreate,
-    current_user = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
-    user = get_user_by_email(current_user["email"])
-    db_collection = create_collection(owner_id=user.id, collection=collection)
+    db_collection = create_collection(owner_id=current_user.id, collection=collection)
     return db_collection
 
-@router.get("/{collection_id}", response_model=CollectionOut,
-            dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+# --- Helpers ---
+
+def _ensure_owner_or_admin(collection: Collection, current_user: User):
+    roles = getattr(current_user, "roles", []) or []
+    is_admin = ("admin" in roles) if isinstance(roles, (list, set, tuple)) else roles == "admin"
+    if collection.owner_id != current_user.id and not is_admin:
+        raise HTTPException(status_code=403, detail="Not allowed")
+
+# --- CRUD par id ---
+
+@router.get(
+    "/{collection_id:uuid}",
+    response_model=CollectionOut,
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
 def get_collection_by_id(collection_id: UUID):
     db_collection = get_collection(collection_id)
     if not db_collection:
         raise HTTPException(status_code=404, detail="Collection not found")
     return db_collection
 
-@router.put("/{collection_id}", response_model=CollectionOut,
-            dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+
+@router.put(
+    "/{collection_id:uuid}",
+    response_model=CollectionOut,
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
 def update_collection_by_id(
     collection_id: UUID,
     collection: CollectionUpdate,
-    current_user = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     db_collection = get_collection(collection_id)
     if not db_collection:
         raise HTTPException(status_code=404, detail="Collection not found")
-    if db_collection.owner_id != current_user.id and "admin" not in current_user.roles:
-        raise HTTPException(status_code=403, detail="Not authorized to update this collection")
+    _ensure_owner_or_admin(db_collection, current_user)
     updated_collection = update_collection(collection_id, collection)
     return updated_collection
 
-@router.delete("/{collection_id}", status_code=status.HTTP_204_NO_CONTENT,
-                dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+
+@router.delete(
+    "/{collection_id:uuid}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
 def delete_collection_by_id(
     collection_id: UUID,
-    current_user = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     db_collection = get_collection(collection_id)
     if not db_collection:
         raise HTTPException(status_code=404, detail="Collection not found")
-    if db_collection.owner_id != current_user.id and "admin" not in current_user.roles:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this collection")
+    _ensure_owner_or_admin(db_collection, current_user)
     success = delete_collection(collection_id)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to delete collection")
     return
 
-def _ensure_owner_or_admin(collection, current_user):
-    user = get_user_by_email(current_user["email"])
-    if collection.owner_id != user.id and current_user.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Not allowed")
+# --- Liaison documents ---
 
-@router.post("/{collection_id}/docs", response_model=CollectionWithDocs,
-             status_code=status.HTTP_201_CREATED,
-             dependencies=[Depends(require_roles("user","maintainer","admin"))])
-def link_doc(collection_id: UUID, payload: CollectionDocLink,
-             current_user: dict = Depends(get_current_user)):
-    col = add_doc_to_collection(collection_id, payload.doc_id)
-    if not col:
-        raise HTTPException(status_code=404, detail="Collection ou Doc introuvable")
-    _ensure_owner_or_admin(col, current_user)
-    return col
-
-@router.delete("/{collection_id}/docs/{doc_id}",
-               status_code=status.HTTP_204_NO_CONTENT,
-               dependencies=[Depends(require_roles("user","maintainer","admin"))])
-def unlink_doc(collection_id: UUID, doc_id: UUID,
-               current_user: dict = Depends(get_current_user)):
-
+@router.post(
+    "/{collection_id:uuid}/docs",
+    response_model=CollectionWithDocs,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
+def link_doc(
+    collection_id: UUID,
+    payload: CollectionDocLink,
+    current_user: User = Depends(get_current_user),
+):
     col = get_collection(collection_id)
     if not col:
         raise HTTPException(status_code=404, detail="Collection introuvable")
+    _ensure_owner_or_admin(col, current_user)
 
+    col = add_doc_to_collection(collection_id, payload.doc_id)
+    if not col:
+        raise HTTPException(status_code=404, detail="Collection ou Doc introuvable")
+    return col
+
+
+@router.delete(
+    "/{collection_id:uuid}/docs/{doc_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
+def unlink_doc(
+    collection_id: UUID,
+    doc_id: UUID,
+    current_user: User = Depends(get_current_user),
+):
+    col = get_collection(collection_id)
+    if not col:
+        raise HTTPException(status_code=404, detail="Collection introuvable")
     _ensure_owner_or_admin(col, current_user)
 
     remove_doc_from_collection(collection_id, doc_id)
     return
 
-@router.get("/{collection_id}/docs", response_model=list[DocMini],
-            dependencies=[Depends(require_roles("user","maintainer","admin"))])
+
+@router.get(
+    "/{collection_id:uuid}/docs",
+    response_model=List[DocMini],
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
 def list_collection_docs(collection_id: UUID):
     docs = list_docs_in_collection(collection_id)
     if docs is None:

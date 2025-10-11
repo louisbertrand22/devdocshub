@@ -9,6 +9,20 @@ services:
     depends_on:
       - db
       - search
+  
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE: "http://localhost:8000"
+    environment:
+      NEXT_PUBLIC_API_BASE: "http://localhost:8000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
 
   db:
     image: postgres:15

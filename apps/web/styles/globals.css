@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------
+   Design tokens (light/dark)
+---------------------------------------- */
+@layer base {
+  :root {
+    --bg: 255 255 255;         /* white */
+    --fg: 17 24 39;            /* gray-900 */
+    --muted: 249 250 251;      /* gray-50 */
+    --border: 229 231 235;     /* gray-200 */
+    --ring: 59 130 246;        /* blue-500 */
+    --primary: 0 0 0;          /* black */
+    --destructive: 239 68 68;  /* red-500 */
+  }
+
+  .dark {
+    --bg: 10 10 12;            /* near black */
+    --fg: 229 231 235;         /* gray-200 */
+    --muted: 22 22 26;         /* dark surface */
+    --border: 38 38 42;        /* zinc-800 */
+    --ring: 37 99 235;         /* blue-600 */
+    --primary: 255 255 255;    /* white */
+    --destructive: 239 68 68;  /* red-500 */
+  }
+
+  html, body, #__next {
+    height: 100%;
+  }
+
+  body {
+    @apply antialiased;
+    color: rgb(var(--fg));
+    background-color: rgb(var(--bg));
+  }
+
+  *:focus-visible {
+    outline: 2px solid rgb(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+/* ---------------------------------------
+   Typography & elements
+---------------------------------------- */
+@layer base {
+  h1 { @apply text-3xl md:text-4xl font-bold tracking-tight; }
+  h2 { @apply text-2xl md:text-3xl font-semibold tracking-tight; }
+  h3 { @apply text-xl md:text-2xl font-semibold; }
+  h4 { @apply text-lg font-semibold; }
+  p  { @apply leading-7; }
+  small { @apply text-sm text-gray-500 dark:text-gray-400; }
+
+  a {
+    @apply underline decoration-[1.5px] underline-offset-2;
+    color: rgb(var(--ring));
+  }
+  a:hover { @apply opacity-90; }
+
+  code, kbd, pre, samp {
+    @apply font-mono;
+  }
+}
+
+/* ---------------------------------------
+   Cards / Panels (helpers)
+---------------------------------------- */
+@layer components {
+  .panel {
+    @apply rounded-xl border p-4 bg-white dark:bg-neutral-900
+           border-gray-200 dark:border-neutral-800 shadow-sm;
+  }
+  .muted {
+    color: rgb(var(--fg) / 0.7);
+  }
+}
+
+/* ---------------------------------------
+   Forms (inputs, selects, textareas)
+---------------------------------------- */
+@layer components {
+  .input {
+    @apply w-full rounded-md border px-3 py-2 text-sm
+           bg-white dark:bg-neutral-900
+           border-gray-200 dark:border-neutral-800
+           placeholder:text-gray-400
+           focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))];
+  }
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium
+           transition;
+  }
+  .btn-primary {
+    @apply btn bg-black text-white hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/90;
+  }
+  .btn-secondary {
+    @apply btn bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-neutral-800 dark:text-gray-100 dark:hover:bg-neutral-700;
+  }
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-600/90;
+  }
+}
+
+/* ---------------------------------------
+   Tables (generic)
+---------------------------------------- */
+@layer components {
+  table { @apply w-full border-collapse; }
+  thead th {
+    @apply text-left text-sm font-medium text-gray-600 dark:text-gray-300 border-b
+           border-gray-200 dark:border-neutral-800;
+  }
+  tbody td {
+    @apply align-top text-sm py-2;
+  }
+  tbody tr {
+    @apply border-b border-gray-200 dark:border-neutral-800;
+  }
+  tbody tr:hover {
+    @apply bg-gray-50 dark:bg-neutral-800/50;
+  }
+}
+
+/* ---------------------------------------
+   Markdown / prose
+---------------------------------------- */
+@layer components {
+  .prose {
+    @apply max-w-none;
+  }
+  .prose h1, .prose h2, .prose h3 { @apply mt-6 mb-3; }
+  .prose p { @apply my-4; }
+  .prose ul { @apply list-disc pl-6 my-4; }
+  .prose ol { @apply list-decimal pl-6 my-4; }
+  .prose code { @apply px-1 py-0.5 rounded bg-gray-100 dark:bg-neutral-800; }
+  .prose pre {
+    @apply p-4 rounded-lg bg-gray-100 dark:bg-neutral-900 overflow-x-auto border
+           border-gray-200 dark:border-neutral-800;
+  }
+  .prose blockquote {
+    @apply border-l-4 pl-4 italic text-gray-600 dark:text-gray-300;
+  }
+}
+
+/* ---------------------------------------
+   Scrollbar (WebKit & Firefox)
+---------------------------------------- */
+@layer utilities {
+  /* Firefox */
+  * {
+    scrollbar-color: rgba(0,0,0,.25) transparent;
+    scrollbar-width: thin;
+  }
+  /* WebKit */
+  ::-webkit-scrollbar        { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track  { background: transparent; }
+  ::-webkit-scrollbar-thumb  { background: rgba(0,0,0,.25); border-radius: 9999px; }
+  .dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.25); }
+}
+
+/* ---------------------------------------
+   Dialog overlay fix (for headless dialog)
+---------------------------------------- */
+@layer utilities {
+  .fixed-full {
+    @apply fixed inset-0;
+  }
+}

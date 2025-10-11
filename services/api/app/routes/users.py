@@ -9,7 +9,13 @@ from uuid import UUID
 
 router = APIRouter()
 
-@router.get("/", response_model=List[UserOut], dependencies=[Depends(require_roles("admin"))])
+@router.get("/count", response_model=int, dependencies=[Depends(require_roles("admin"))])
+def count_users():
+    """Compter le nombre total d’utilisateurs (admin only)."""
+    users = get_all_users()
+    return len(users)
+
+@router.get("/", response_model=List[UserOut], dependencies=[Depends(require_roles("admin", "user"))])
 def list_users():
     """Lister tous les utilisateurs (admin only)."""
     users = get_all_users()
