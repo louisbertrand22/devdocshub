@@ -52,7 +52,7 @@ def get_doc(slug: str):
     return serialize(doc)
 
 @router.post("/add", response_model=DocOut, status_code=status.HTTP_201_CREATED,
-             dependencies=[Depends(require_roles("maintainer", "admin"))])
+             dependencies=[Depends(require_roles("maintainer", "admin", "user"))])
 def create_doc(payload: DocCreate):
     new_doc = add_doc(
         slug=payload.slug,

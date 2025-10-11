@@ -22,8 +22,11 @@ export const useAuth = create<AuthState>((set) => ({
     DEFAULT_API_BASE,
   setToken: (t) => {
     if (typeof window !== "undefined") {
-      if (t) localStorage.setItem("ddh_token", t);
-      else localStorage.removeItem("ddh_token");
+      if (t) {
+        localStorage.setItem("ddh_token", t);
+      } else {
+        localStorage.removeItem("ddh_token");
+      } 
     }
     set({ token: t });
   },

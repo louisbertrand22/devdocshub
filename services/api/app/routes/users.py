@@ -15,7 +15,7 @@ def count_users():
     users = get_all_users()
     return len(users)
 
-@router.get("/", response_model=List[UserOut], dependencies=[Depends(require_roles("admin"))])
+@router.get("/", response_model=List[UserOut], dependencies=[Depends(require_roles("admin", "user"))])
 def list_users():
     """Lister tous les utilisateurs (admin only)."""
     users = get_all_users()

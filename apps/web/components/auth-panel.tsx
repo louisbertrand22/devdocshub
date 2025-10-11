@@ -96,6 +96,7 @@ export default function AuthPanel() {
       const me = await apiFetch("/auth/me", {}, apiBase, tok);
       setUser(me);
       toast({ title: "Connecté", description: `Bienvenue${me?.name ? ", " + me.name : ""} !` });
+      window.location.href = "/";
     } catch (e: any) {
       setErrors({ login: e?.message || "Échec de la connexion." });
     } finally {
