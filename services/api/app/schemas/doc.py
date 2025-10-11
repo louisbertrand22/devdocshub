@@ -15,3 +15,9 @@ class DocOut(BaseModel):
     content: str
 
     model_config = {"from_attributes": True}
+
+class DocMini(BaseModel):
+    id: UUID
+    slug: str
+    title: str
+    model_config = {"from_attributes": True}

@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, DateTime, ForeignKey, Text
 from typing import Optional, List
+from sqlalchemy.orm import relationship
 from fastapi import HTTPException
 from datetime import datetime
 from app.db.base import Base
@@ -16,6 +17,8 @@ class Doc(Base):
     tech = Column(String, nullable=False)
     content = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    collections = relationship("Collection", secondary="collection_docs", back_populates="docs")
 
 def get_all_docs(q: Optional[str] = None, tech: Optional[str] = None, page: int = 1, size: int = 20):
     session = next(get_session())

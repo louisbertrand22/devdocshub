@@ -3,6 +3,11 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.utils.auth_dep import require_roles, get_current_user
 from app.models.user import get_user_by_email
+from app.crud.collection_doc import add_doc_to_collection, remove_doc_from_collection, list_docs_in_collection
+from app.schemas.doc import DocMini
+
+from app.schemas.collection_doc import CollectionDocLink
+from app.schemas.collection import CollectionWithDocs
 
 from app.schemas.collection import CollectionCreate, CollectionUpdate, CollectionOut
 from app.models.collection import list_collections, get_collection, create_collection, update_collection, delete_collection
@@ -70,3 +75,42 @@ def delete_collection_by_id(
     if not success:
         raise HTTPException(status_code=500, detail="Failed to delete collection")
     return
+
+def _ensure_owner_or_admin(collection, current_user):
+    user = get_user_by_email(current_user["email"])
+    if collection.owner_id != user.id and current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Not allowed")
+
+@router.post("/{collection_id}/docs", response_model=CollectionWithDocs,
+             status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(require_roles("user","maintainer","admin"))])
+def link_doc(collection_id: UUID, payload: CollectionDocLink,
+             current_user: dict = Depends(get_current_user)):
+    col = add_doc_to_collection(collection_id, payload.doc_id)
+    if not col:
+        raise HTTPException(status_code=404, detail="Collection ou Doc introuvable")
+    _ensure_owner_or_admin(col, current_user)
+    return col
+
+@router.delete("/{collection_id}/docs/{doc_id}",
+               status_code=status.HTTP_204_NO_CONTENT,
+               dependencies=[Depends(require_roles("user","maintainer","admin"))])
+def unlink_doc(collection_id: UUID, doc_id: UUID,
+               current_user: dict = Depends(get_current_user)):
+
+    col = get_collection(collection_id)
+    if not col:
+        raise HTTPException(status_code=404, detail="Collection introuvable")
+
+    _ensure_owner_or_admin(col, current_user)
+
+    remove_doc_from_collection(collection_id, doc_id)
+    return
+
+@router.get("/{collection_id}/docs", response_model=list[DocMini],
+            dependencies=[Depends(require_roles("user","maintainer","admin"))])
+def list_collection_docs(collection_id: UUID):
+    docs = list_docs_in_collection(collection_id)
+    if docs is None:
+        raise HTTPException(status_code=404, detail="Collection introuvable")
+    return docs
