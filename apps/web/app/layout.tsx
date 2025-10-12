@@ -12,6 +12,13 @@ const AppShell = dynamic(() => import("@/components/layout/Shell"), {
 export const metadata: Metadata = {
   title: "DevDocsHub",
   description: "Documentation & notes techniques centralisées",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
