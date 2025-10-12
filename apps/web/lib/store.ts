@@ -34,7 +34,12 @@ export const useAuth = create<AuthState>((set, get) => ({
     set({ token: t });
     // Auto-load user when token is set
     if (t) {
-      get().loadUser();
+      // Call loadUser in next tick to ensure state is updated
+      const state = get();
+      const apiBase = state.apiBase;
+      setTimeout(() => {
+        loadUserWithToken(t, apiBase, set);
+      }, 0);
     } else {
       set({ user: null });
     }
@@ -51,17 +56,26 @@ export const useAuth = create<AuthState>((set, get) => ({
       return;
     }
     
-    set({ loading: true });
-    try {
-      const user = await apiFetch("/auth/me", {}, apiBase, token);
-      set({ user, loading: false });
-    } catch (error) {
-      console.error("Failed to load user:", error);
-      // Token might be invalid, clear it
-      set({ user: null, token: null, loading: false });
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("ddh_token");
-      }
-    }
+    await loadUserWithToken(token, apiBase, set);
   },
 }));
+
+// Helper function to load user with explicit token parameter
+async function loadUserWithToken(
+  token: string,
+  apiBase: string,
+  set: (state: Partial<AuthState>) => void
+) {
+  set({ loading: true });
+  try {
+    const user = await apiFetch("/auth/me", {}, apiBase, token);
+    set({ user, loading: false });
+  } catch (error) {
+    console.error("Failed to load user:", error);
+    // Token might be invalid, clear it
+    set({ user: null, token: null, loading: false });
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("ddh_token");
+    }
+  }
+}
