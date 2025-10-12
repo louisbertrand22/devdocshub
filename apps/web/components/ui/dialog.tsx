@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { createPortal } from "react-dom";
+import styles from "./dialog.module.css";
 
 type DialogContextValue = {
   open: boolean;
@@ -145,64 +146,55 @@ export function DialogContent({
   const overlay = (
     <div
       aria-hidden
-      className="fixed inset-0 z-[80] bg-black/50 backdrop-blur-sm"
+      className={styles.overlay}
       onMouseDown={() => {
         onPointerDownOutside?.();
         setOpen(false);
         triggerRef.current?.focus?.();
       }}
-    />
-  );
-
-  const content = (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className={`fixed z-[81] inset-0 grid place-items-center p-4`}
-      onMouseDown={(e) => {
-        // stop overlay close when clicking inside the panel
-        e.stopPropagation();
-      }}
     >
       <div
-        {...rest}
-        ref={contentRef}
-        tabIndex={-1}
-        className={`w-full max-w-lg rounded-xl border bg-white text-gray-900 shadow-xl outline-none dark:bg-neutral-900 dark:text-white dark:border-neutral-800 ${className}`}
+        role="dialog"
+        aria-modal="true"
+        onMouseDown={(e) => {
+          // stop overlay close when clicking inside the panel
+          e.stopPropagation();
+        }}
       >
-        {children}
+        <div
+          {...rest}
+          ref={contentRef}
+          tabIndex={-1}
+          className={`${styles.content} ${className}`}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
 
-  return createPortal(
-    <>
-      {overlay}
-      {content}
-    </>,
-    portalRoot
-  );
+  return createPortal(overlay, portalRoot);
 }
 
 export function DialogHeader({
   className = "",
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={`border-b p-4 ${className}`} {...rest} />;
+  return <div className={`${styles.header} ${className}`} {...rest} />;
 }
 
 export function DialogTitle({
   className = "",
   ...rest
 }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h2 className={`text-lg font-semibold leading-none ${className}`} {...rest} />;
+  return <h2 className={`${styles.title} ${className}`} {...rest} />;
 }
 
 export function DialogDescription({
   className = "",
   ...rest
 }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={`mt-1 text-sm text-gray-600 dark:text-gray-300 ${className}`} {...rest} />;
+  return <p className={`${styles.description} ${className}`} {...rest} />;
 }
 
 /**

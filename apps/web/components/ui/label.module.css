@@ -1,0 +1,17 @@
+/* Label Component Styles */
+
+.label {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: rgb(var(--fg));
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+}
+
+.label:hover {
+  color: rgb(var(--ring));
+}

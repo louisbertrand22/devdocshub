@@ -1,0 +1,46 @@
+/* Input Component Styles */
+
+.input {
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(var(--border));
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.input:focus {
+  border-color: rgb(var(--ring));
+  box-shadow: 0 0 0 3px rgb(var(--ring) / 0.1);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.input:hover:not(:focus) {
+  border-color: rgb(var(--border));
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.input::placeholder {
+  color: rgb(var(--fg) / 0.5);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: rgb(var(--muted));
+}
+
+:global(.dark) .input {
+  background-color: rgb(var(--muted));
+  border-color: rgb(38 38 42 / 1);
+}
+
+:global(.dark) .input:focus {
+  background-color: rgb(var(--bg));
+  border-color: rgb(var(--ring));
+}

@@ -1,0 +1,65 @@
+/* Separator Component Styles */
+
+.separator {
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(var(--border)) 20%,
+    rgb(var(--border)) 80%,
+    transparent 100%
+  );
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(
+    90deg,
+    rgba(99, 102, 241, 0.5),
+    rgba(168, 85, 247, 0.5),
+    rgba(59, 130, 246, 0.5)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.separator:hover::before,
+.separator:hover::after {
+  opacity: 0.3;
+}
+
+.horizontal {
+  height: 1px;
+  width: 100%;
+}
+
+.horizontal::before,
+.horizontal::after {
+  height: 100%;
+  width: 100%;
+}
+
+.vertical {
+  height: 100%;
+  width: 1px;
+}
+
+.vertical::before,
+.vertical::after {
+  height: 100%;
+  width: 100%;
+}
+
+:global(.dark) .separator {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(38 38 42 / 1) 20%,
+    rgb(38 38 42 / 1) 80%,
+    transparent 100%
+  );
+}

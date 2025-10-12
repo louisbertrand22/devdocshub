@@ -1,0 +1,95 @@
+/* Tabs Component Styles */
+
+.list {
+  display: inline-flex;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background-color: rgb(var(--muted));
+  padding: 0.25rem;
+  color: rgb(var(--fg) / 0.7);
+  transition: background-color 0.2s ease;
+}
+
+:global(.dark) .list {
+  background-color: rgb(38 38 42 / 1);
+}
+
+.trigger {
+  display: inline-flex;
+  min-width: 100px;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  color: rgb(var(--fg) / 0.7);
+}
+
+.trigger:hover:not([data-state="active"]) {
+  background-color: rgba(var(--fg) / 0.05);
+  color: rgb(var(--fg));
+}
+
+.trigger:focus-visible {
+  outline: 2px solid rgb(var(--ring));
+  outline-offset: 2px;
+}
+
+.trigger:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.trigger[data-state="active"] {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+              0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  animation: tabSlideIn 0.2s ease-out;
+}
+
+@keyframes tabSlideIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+:global(.dark) .trigger[data-state="active"] {
+  background-color: rgb(22 22 26 / 1);
+}
+
+.content {
+  margin-top: 0.5rem;
+  outline: none;
+  animation: contentFadeIn 0.3s ease-out;
+}
+
+.content:focus-visible {
+  outline: 2px solid rgb(var(--ring));
+  outline-offset: 2px;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

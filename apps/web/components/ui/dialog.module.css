@@ -1,0 +1,97 @@
+/* Dialog Component Styles */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  animation: overlayFadeIn 0.2s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 51;
+  display: grid;
+  width: 100%;
+  max-width: 32rem;
+  gap: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--bg));
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: contentSlideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes contentSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+:global(.dark) .content {
+  background-color: rgb(22 22 26 / 1);
+  border-color: rgb(38 38 42 / 1);
+}
+
+.header {
+  border-bottom: 1px solid rgb(var(--border));
+  padding: 1rem;
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--bg)),
+    rgb(var(--muted) / 0.3)
+  );
+  transition: border-color 0.2s ease;
+}
+
+:global(.dark) .header {
+  background: linear-gradient(
+    to bottom,
+    rgb(22 22 26 / 1),
+    rgb(38 38 42 / 0.3)
+  );
+}
+
+.title {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: rgb(var(--fg));
+  margin: 0;
+}
+
+.description {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(var(--fg) / 0.7);
+  margin-bottom: 0;
+}
+
+:global(.dark) .description {
+  color: rgb(var(--fg) / 0.8);
+}

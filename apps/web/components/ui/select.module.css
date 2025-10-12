@@ -1,0 +1,139 @@
+/* Select Component Styles */
+
+.trigger {
+  display: flex;
+  height: 2.5rem;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--bg));
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(var(--fg));
+  transition: all 0.2s ease;
+  cursor: pointer;
+  outline: none;
+}
+
+.trigger:hover:not(:disabled) {
+  border-color: rgb(var(--ring) / 0.5);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.trigger:focus {
+  border-color: rgb(var(--ring));
+  box-shadow: 0 0 0 3px rgb(var(--ring) / 0.1);
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.trigger[data-placeholder] {
+  color: rgb(var(--fg) / 0.5);
+}
+
+:global(.dark) .trigger {
+  background-color: rgb(var(--muted));
+  border-color: rgb(38 38 42 / 1);
+}
+
+.content {
+  position: relative;
+  z-index: 50;
+  min-width: 8rem;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  animation: contentFadeIn 0.2s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:global(.dark) .content {
+  background-color: rgb(22 22 26 / 1);
+  border-color: rgb(38 38 42 / 1);
+}
+
+.viewport {
+  padding: 0.25rem;
+}
+
+.label {
+  padding: 0.5rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: rgb(var(--fg));
+}
+
+.item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+  align-items: center;
+  border-radius: 0.25rem;
+  padding: 0.5rem 2rem 0.5rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.item:focus {
+  background-color: rgb(var(--muted));
+  color: rgb(var(--fg));
+}
+
+.item[data-disabled] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.itemIndicator {
+  position: absolute;
+  left: 0.5rem;
+  display: flex;
+  height: 0.875rem;
+  width: 0.875rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.separator {
+  margin: 0.25rem -0.25rem;
+  height: 1px;
+  background-color: rgb(var(--border));
+}
+
+.scrollButton {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0;
+  transition: background-color 0.2s ease;
+}
+
+.scrollButton:hover {
+  background-color: rgb(var(--muted));
+}
