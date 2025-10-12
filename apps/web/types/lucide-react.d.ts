@@ -21,6 +21,8 @@ declare module "lucide-react" {
   export const User: React.ComponentType<any>;
   export const Loader2: React.ComponentType<any>;
   export const RefreshCw: React.ComponentType<any>;
+  export const Calendar: React.ComponentType<any>;
+  export const Shield: React.ComponentType<any>;
 
   const _default: { [key: string]: React.ComponentType<any> };
   export default _default;

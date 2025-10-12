@@ -12,7 +12,7 @@ import CollectionsPage from "@/app/collections/page";
  */
 export default function DevDocsHubApp() {
   const [tab, setTab] = useState<
-    "dashboard" | "docs" | "notes" | "collections" | "users" | "auth"
+    "dashboard" | "docs" | "notes" | "collections" | "users" | "auth" | "profile"
   >("dashboard");
 
   return (

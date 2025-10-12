@@ -3,7 +3,7 @@
 import React from "react";
 import "./AppSidebar.css";
 
-type Tab = "dashboard" | "docs" | "notes" | "collections" | "users" | "auth";
+type Tab = "dashboard" | "docs" | "notes" | "collections" | "users" | "auth" | "profile";
 
 interface MenuItem {
   key: Tab;
@@ -56,6 +56,12 @@ export function AppSidebar({
     </svg>
   );
 
+  const ProfileIcon = () => (
+    <svg className="app-sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+  );
+
   const menuItems: MenuItem[] = [
     {
       key: "dashboard",
@@ -84,6 +90,11 @@ export function AppSidebar({
       key: "users",
       label: "Utilisateurs",
       icon: UsersIcon,
+    },
+    {
+      key: "profile",
+      label: "Mon Profil",
+      icon: ProfileIcon,
     },
     {
       key: "auth",

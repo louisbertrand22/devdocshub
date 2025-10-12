@@ -24,6 +24,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     router.push("/auth");
   };
 
+  const handleProfile = () => {
+    router.push("/profile");
+    setSidebarOpen(false);
+  };
+
   const handleNavigation = (tab: string) => {
     const routes: Record<string, string> = {
       dashboard: "/dashboard",
@@ -32,6 +37,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       collections: "/collections",
       users: "/users",
       auth: "/auth",
+      profile: "/profile",
     };
     router.push(routes[tab] || "/dashboard");
     
@@ -90,6 +96,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             onSearchClick={handleSearch}
             onAuthClick={handleAuth}
             onMenuClick={toggleSidebar}
+            onProfileClick={handleProfile}
           />
 
           {/* Page content */}
