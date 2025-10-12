@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, User as UserIcon, Loader2, LogOut } from "lucide-react";
 
@@ -38,6 +39,7 @@ function passwordScore(pw: string) {
 export default function AuthPanel() {
   const { apiBase, token, setToken, setUser, user } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
 
@@ -68,8 +70,22 @@ export default function AuthPanel() {
         apiBase,
         null
       );
-      toast({ title: "Compte créé", description: "Vous pouvez maintenant vous connecter." });
-      setActiveTab("login");
+      toast({ title: "Compte créé", description: "Connexion automatique en cours..." });
+      
+      // Automatically log in after successful registration
+      const res = await apiFetch(
+        "/auth/login",
+        { method: "POST", body: JSON.stringify({ email, password }) },
+        apiBase,
+        null
+      );
+      const tok = (res as any)?.access_token || (res as any)?.token || (res as any)?.accessToken;
+      if (!tok) throw new Error("Jeton manquant dans la réponse");
+      setToken(tok);
+      const me = await apiFetch("/auth/me", {}, apiBase, tok);
+      setUser(me);
+      toast({ title: "Bienvenue !", description: `Compte créé avec succès${me?.username ? ", " + me.username : ""} !` });
+      router.push("/dashboard");
     } catch (e: any) {
       setErrors({ register: e?.message || "Échec de l'inscription." });
     } finally {
@@ -97,7 +113,7 @@ export default function AuthPanel() {
       const me = await apiFetch("/auth/me", {}, apiBase, tok);
       setUser(me);
       toast({ title: "Connecté", description: `Bienvenue${me?.username ? ", " + me.username : ""} !` });
-      window.location.href = "/";
+      router.push("/dashboard");
     } catch (e: any) {
       setErrors({ login: e?.message || "Échec de la connexion." });
     } finally {
