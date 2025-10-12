@@ -106,10 +106,10 @@ export function AppSidebar({
     },
   ];
 
-  // Filter out the "auth" menu item if the user is logged in
+  // Filter menu items based on authentication state
   const menuItems = user
     ? allMenuItems.filter((item) => item.key !== "auth")
-    : allMenuItems;
+    : allMenuItems.filter((item) => item.key !== "profile");
 
   return (
     <aside className="app-sidebar">
