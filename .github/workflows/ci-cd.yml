@@ -37,9 +37,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Type check
-        run: |
-          cd apps/web
-          npx tsc --noEmit
+        run: pnpm --filter web exec tsc --noEmit
 
       - name: Build Next.js app
         run: pnpm build

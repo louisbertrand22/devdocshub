@@ -155,11 +155,9 @@ The DevDocsHub project uses GitHub Actions for continuous integration and deploy
 pnpm install --frozen-lockfile
 
 # Type check
-cd apps/web
-npx tsc --noEmit
+pnpm --filter web exec tsc --noEmit
 
 # Build
-cd ../..
 pnpm build
 ```
 
@@ -202,14 +200,13 @@ docker compose down -v
 ### Frontend Build Fails
 
 **Common Issues**:
-- **TypeScript errors**: Check `npx tsc --noEmit` output
+- **TypeScript errors**: Check `pnpm --filter web exec tsc --noEmit` output
 - **Missing dependencies**: Run `pnpm install --frozen-lockfile`
 - **Environment variables**: Ensure `NEXT_PUBLIC_API_BASE` is set
 
 **Solution**:
 ```bash
-cd apps/web
-npx tsc --noEmit
+pnpm --filter web exec tsc --noEmit
 # Fix TypeScript errors
 pnpm build
 ```

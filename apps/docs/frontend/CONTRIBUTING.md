@@ -31,9 +31,7 @@ Before submitting a PR, ensure your changes pass locally:
 
 ```bash
 # Frontend checks
-cd apps/web
-npx tsc --noEmit
-cd ../..
+pnpm --filter web exec tsc --noEmit
 pnpm build
 
 # Backend checks
