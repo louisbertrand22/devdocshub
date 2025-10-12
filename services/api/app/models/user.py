@@ -28,6 +28,19 @@ def get_all_users():
     db_session = next(get_session())
     return db_session.query(User).all()
 
+def get_user_with_details_by_email(email: str):
+    """Get user with all details by email for the /auth/me endpoint"""
+    db_session = next(get_session())
+    user = db_session.query(User).filter(User.email == email).first()
+    if user:
+        return {
+            "id": str(user.id),
+            "email": user.email,
+            "username": user.username,
+            "role": user.role,
+        }
+    return None
+
 def serialize(user: User) -> dict:
     return {
         "id": str(user.id),

@@ -7,7 +7,7 @@ from app.utils.auth_dep import get_current_user
 from app.utils.limits import enforce_login_rate
 
 from app.db.session import get_session
-from app.models.user import User
+from app.models.user import User, get_user_with_details_by_email
 from app.utils import security
 
 router = APIRouter()
@@ -60,4 +60,9 @@ def login(payload: LoginRequest, db: Session = Depends(get_session)):
 @router.get("/me")
 def me(user = Depends(get_current_user)):
     """Renvoie les infos de l'utilisateur connecté à partir du JWT"""
-    return {"user": user}
+    # Récupérer l'utilisateur complet depuis la base de données
+    db_user = get_user_with_details_by_email(user["email"])
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+    
+    return db_user

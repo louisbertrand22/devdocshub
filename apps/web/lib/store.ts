@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { DEFAULT_API_BASE } from "./api";
 
-type User = { id?: string; email?: string; name?: string } | null;
+type User = { id?: string; email?: string; username?: string; name?: string } | null;
 
 type AuthState = {
   token: string | null;
