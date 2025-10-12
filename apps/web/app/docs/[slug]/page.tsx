@@ -5,6 +5,7 @@ import { useParams } from "next/navigation"
 import { apiFetch } from "@/lib/api"
 import { useAuth } from "@/lib/store"
 import ReactMarkdown from "react-markdown"
+import styles from "./doc-view.module.css"
 
 export default function DocViewPage() {
   const params = useParams()
@@ -19,13 +20,28 @@ export default function DocViewPage() {
       .catch(console.error)
   }, [slug])
 
-  if (!doc) return <div>Loading...</div>
+  if (!doc) {
+    return (
+      <div className={styles.docViewContainer}>
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSpinner} />
+          <div className={styles.loadingText}>Loading document...</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-3xl font-bold">{doc.title}</h1>
-      <div className="text-sm text-muted-foreground">{doc.slug}</div>
-      <ReactMarkdown className="prose dark:prose-invert max-w-none">{doc.content}</ReactMarkdown>
+    <div className={styles.docViewContainer}>
+      <div className={styles.contentWrapper}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>{doc.title}</h1>
+          <div className={styles.slug}>{doc.slug}</div>
+        </div>
+        <div className={styles.content}>
+          <ReactMarkdown>{doc.content}</ReactMarkdown>
+        </div>
+      </div>
     </div>
   )
 }
