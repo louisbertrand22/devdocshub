@@ -127,6 +127,16 @@
   border: 1px dashed hsl(var(--border));
 }
 
+/* Author */
+.doc-card__author {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 /* Meta */
 .doc-card__meta {
   display: flex;
