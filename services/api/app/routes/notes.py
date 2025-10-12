@@ -13,6 +13,12 @@ router = APIRouter()
 async def count_notes():
     return get_count_notes()
 
+@router.get("/count/mine", response_model=int, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
+async def count_my_notes(uuid: UUID):
+    # frontend calls /notes/count/mine?uuid=<user-uuid>
+    notes = get_my_notes(uuid)
+    return len(notes)
+
 def serialize(note: Note) -> NoteOut:
     return NoteOut(
         id=str(note.id),
