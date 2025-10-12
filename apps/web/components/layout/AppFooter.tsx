@@ -20,10 +20,10 @@ export function AppFooter() {
       { label: "Changelog", href: "#changelog" },
     ],
     company: [
-      { label: "À propos", href: "#about" },
-      { label: "Blog", href: "#blog" },
-      { label: "Carrières", href: "#careers" },
-      { label: "Contact", href: "#contact" },
+      { label: "À propos", href: "/about" },
+      { label: "Blog", href: "/blog" },
+      { label: "Carrières", href: "/careers" },
+      { label: "Contact", href: "/contact" },
     ],
     legal: [
       { label: "Confidentialité", href: "/privacy" },
