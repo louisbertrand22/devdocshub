@@ -58,6 +58,16 @@ def login(payload: LoginRequest, db: Session = Depends(get_session)):
 
 
 @router.get("/me")
-def me(user = Depends(get_current_user)):
+def me(user = Depends(get_current_user), db: Session = Depends(get_session)):
     """Renvoie les infos de l'utilisateur connecté à partir du JWT"""
-    return {"user": user}
+    # Récupérer l'utilisateur complet depuis la base de données
+    db_user = db.query(User).filter(User.email == user["email"]).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+    
+    return {
+        "id": str(db_user.id),
+        "email": db_user.email,
+        "username": db_user.username,
+        "role": db_user.role,
+    }

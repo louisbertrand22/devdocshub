@@ -22,18 +22,14 @@ export function AppHeader({
   const { theme, toggleTheme } = useTheme();
 
   const username =
+    user?.username ||
     user?.name ||
     user?.email?.split("@")?.[0] ||
     (user ? "Utilisateur" : undefined);
 
-  // Initiales pour l'avatar
+  // Initiales pour l'avatar - première lettre du username
   const initials = username
-    ? username
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
+    ? username[0].toUpperCase()
     : "??";
 
   return (
