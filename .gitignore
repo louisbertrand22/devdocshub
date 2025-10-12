@@ -86,3 +86,7 @@ services/api/.env.local
 services/api/.env.development.local
 services/api/.env.test.local
 services/api/.env.production.local
+
+# Python cache
+__pycache__/
+*.py[cod]
