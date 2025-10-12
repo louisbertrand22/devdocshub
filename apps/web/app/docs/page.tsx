@@ -282,6 +282,12 @@ export default function DocsPage() {
                 </div>
               )}
 
+              {d.author && (
+                <div className="doc-card__author" title="Auteur">
+                  ✍️ {d.author}
+                </div>
+              )}
+
               <footer className="doc-card__meta">
                 <span className="doc-date" title={`Créé le ${fmt(d.created_at)}`}>
                   📅 {fmt(d.created_at)}
