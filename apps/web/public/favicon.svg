@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Circle background -->
+  <circle cx="50" cy="50" r="48" fill="url(#grad)" stroke="#312e81" stroke-width="2"/>
+  <!-- Compass outer ring -->
+  <circle cx="50" cy="50" r="38" fill="none" stroke="#e0e7ff" stroke-width="2"/>
+  <!-- Compass needle (pointing NE like 🧭) -->
+  <path d="M 50 50 L 50 20 L 65 40 Z" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <path d="M 50 50 L 50 80 L 35 60 Z" fill="#dbeafe" stroke="#60a5fa" stroke-width="1"/>
+  <!-- Center dot -->
+  <circle cx="50" cy="50" r="4" fill="#fff"/>
+  <!-- Direction markers -->
+  <circle cx="50" cy="15" r="2" fill="#e0e7ff"/>
+  <circle cx="85" cy="50" r="2" fill="#e0e7ff"/>
+  <circle cx="50" cy="85" r="2" fill="#e0e7ff"/>
+  <circle cx="15" cy="50" r="2" fill="#e0e7ff"/>
+</svg>
