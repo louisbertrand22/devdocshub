@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/lib/store";
 import "./AppSidebar.css";
 
 type Tab = "dashboard" | "docs" | "notes" | "collections" | "users" | "auth" | "profile";
