@@ -26,10 +26,10 @@ export function AppFooter() {
       { label: "Contact", href: "#contact" },
     ],
     legal: [
-      { label: "Confidentialité", href: "#privacy" },
-      { label: "Conditions", href: "#terms" },
-      { label: "Cookies", href: "#cookies" },
-      { label: "Licences", href: "#licenses" },
+      { label: "Confidentialité", href: "/privacy" },
+      { label: "Conditions", href: "/terms" },
+      { label: "Cookies", href: "/cookies" },
+      { label: "Licences", href: "/licenses" },
     ],
   };
 
