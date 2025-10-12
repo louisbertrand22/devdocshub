@@ -41,7 +41,7 @@ export default function AuthPanel() {
 
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
 
-  const [registerData, setRegisterData] = useState({ email: "", password: "", name: "" });
+  const [registerData, setRegisterData] = useState({ email: "", password: "", username: "" });
   const [loginData, setLoginData] = useState({ email: "", password: "" });
 
   const [showPwLogin, setShowPwLogin] = useState(false);
@@ -54,8 +54,8 @@ export default function AuthPanel() {
 
   const handleRegister = async () => {
     setErrors(null);
-    const { email, password, name } = registerData;
-    if (!name.trim()) return setErrors({ register: "Le nom est requis." });
+    const { email, password, username } = registerData;
+    if (!username.trim()) return setErrors({ register: "Le nom est requis." });
     if (!isEmail(email)) return setErrors({ register: "Email invalide." });
     if (passwordScore(password) < 3)
       return setErrors({ register: "Mot de passe trop faible (min. 8 caractères, mélangez chiffres/majuscules/symboles)." });
@@ -96,7 +96,7 @@ export default function AuthPanel() {
       setToken(tok);
       const me = await apiFetch("/auth/me", {}, apiBase, tok);
       setUser(me);
-      toast({ title: "Connecté", description: `Bienvenue${me?.name ? ", " + me.name : ""} !` });
+      toast({ title: "Connecté", description: `Bienvenue${me?.username ? ", " + me.username : ""} !` });
       window.location.href = "/";
     } catch (e: any) {
       setErrors({ login: e?.message || "Échec de la connexion." });
@@ -141,7 +141,7 @@ export default function AuthPanel() {
           <CardContent className={styles.connectedContent}>
             <div className={styles.userInfo}>
               <p className={styles.userEmail}>{user.email}</p>
-              {user.name && <p className={styles.userName}>{user.name}</p>}
+              {user.username && <p className={styles.userName}>{user.username}</p>}
             </div>
             <Button variant="outline" onClick={doLogout} className={styles.logoutButton}>
               <LogOut className="mr-2 h-4 w-4" /> Se déconnecter
@@ -246,8 +246,8 @@ export default function AuthPanel() {
                       <UserIcon className={styles.inputIcon} />
                       <Input
                         id="reg-name"
-                        value={registerData.name}
-                        onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+                        value={registerData.username}
+                        onChange={(e) => setRegisterData({ ...registerData, username: e.target.value })}
                         placeholder="Ada Lovelace"
                         className={styles.inputWithIcon}
                         autoComplete="name"
