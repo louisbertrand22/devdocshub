@@ -36,5 +36,5 @@ pnpm build
 
 # Backend checks
 cd services/api
-pytest -v
+PYTHONPATH=. pytest -v
 ```
