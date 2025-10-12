@@ -6,12 +6,16 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { AppFooter } from "@/components/layout/AppFooter";
 import { Toaster } from "@/components/ui/toaster";
+import { useAuthInit } from "@/hooks/useAuthInit";
 import "./Shell.css";
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router: any = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Initialize auth state (load user from token on app start)
+  useAuthInit();
 
   const isAuthPage = pathname === "/auth";
 
