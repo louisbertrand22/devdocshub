@@ -11,12 +11,14 @@ interface AppHeaderProps {
   onSearchClick?: () => void;
   onAuthClick?: () => void;
   onMenuClick?: () => void;
+  onProfileClick?: () => void;
 }
 
 export function AppHeader({
   onSearchClick,
   onAuthClick,
   onMenuClick,
+  onProfileClick,
 }: AppHeaderProps) {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -123,11 +125,23 @@ export function AppHeader({
           {/* User menu */}
           {user ? (
             <div className="app-header__user">
-              <div className="app-header__user-info">
+              <div 
+                className="app-header__user-info" 
+                onClick={onProfileClick}
+                style={{ cursor: 'pointer' }}
+                title="Voir mon profil"
+              >
                 <span className="app-header__username">{username}</span>
                 <span className="app-header__user-role">Développeur</span>
               </div>
-              <div className="app-header__avatar">{initials}</div>
+              <div 
+                className="app-header__avatar"
+                onClick={onProfileClick}
+                style={{ cursor: 'pointer' }}
+                title="Voir mon profil"
+              >
+                {initials}
+              </div>
               <Button
                 onClick={logout}
                 size="sm"
