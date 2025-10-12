@@ -1,0 +1,96 @@
+/* Badge Component Styles */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: default;
+  letter-spacing: 0.01em;
+}
+
+.badge:focus-visible {
+  outline: 2px solid rgb(var(--ring));
+  outline-offset: 2px;
+  border-radius: 9999px;
+}
+
+/* Variants */
+.default {
+  border-color: transparent;
+  background-color: rgb(var(--primary));
+  color: rgb(var(--bg));
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.default:hover {
+  background-color: rgba(var(--primary) / 0.8);
+  transform: scale(1.05);
+}
+
+.secondary {
+  border-color: transparent;
+  background-color: rgb(var(--muted));
+  color: rgb(var(--fg));
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.secondary:hover {
+  background-color: rgb(229 231 235 / 1);
+  transform: scale(1.05);
+}
+
+:global(.dark) .secondary {
+  background-color: rgb(38 38 42 / 1);
+}
+
+:global(.dark) .secondary:hover {
+  background-color: rgb(52 52 58 / 1);
+}
+
+.destructive {
+  border-color: transparent;
+  background-color: rgb(var(--destructive));
+  color: white;
+  box-shadow: 0 1px 2px 0 rgba(239, 68, 68, 0.2);
+}
+
+.destructive:hover {
+  background-color: rgba(var(--destructive) / 0.8);
+  transform: scale(1.05);
+}
+
+.outline {
+  border-color: rgb(var(--border));
+  background-color: transparent;
+  color: rgb(var(--fg));
+}
+
+.outline:hover {
+  background-color: rgb(var(--muted));
+  border-color: rgb(var(--ring) / 0.5);
+  transform: scale(1.05);
+}
+
+/* Animation for new badges */
+@keyframes badgePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.badge {
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+.badge:hover {
+  animation: none;
+}

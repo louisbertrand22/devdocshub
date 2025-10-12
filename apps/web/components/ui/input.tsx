@@ -1,5 +1,7 @@
 import * as React from "react";
-export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input className="w-full rounded-md border px-3 py-2 text-sm" {...props} />;
+import styles from "./input.module.css";
+
+export function Input({ className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={`${styles.input} ${className}`} {...props} />;
 }
 export default Input;

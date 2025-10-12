@@ -1,0 +1,67 @@
+/* Card Component Styles */
+
+.card {
+  border-radius: 0.75rem;
+  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--bg));
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+              0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    rgba(99, 102, 241, 0.5) 0%, 
+    rgba(168, 85, 247, 0.5) 50%, 
+    rgba(59, 130, 246, 0.5) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+  border-color: rgb(var(--ring) / 0.3);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+:global(.dark) .card {
+  background-color: rgb(22 22 26 / 1);
+  border-color: rgb(38 38 42 / 1);
+}
+
+.cardContent {
+  padding: 1rem;
+}
+
+.cardHeader {
+  padding: 1rem;
+  padding-top: 1.5rem;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.card:hover .cardHeader {
+  border-bottom-color: rgb(var(--border) / 0.5);
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: rgb(var(--fg));
+  margin: 0;
+}

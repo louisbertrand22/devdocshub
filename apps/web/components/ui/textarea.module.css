@@ -1,0 +1,49 @@
+/* Textarea Component Styles */
+
+.textarea {
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(var(--border));
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
+  transition: all 0.2s ease;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.textarea:focus {
+  border-color: rgb(var(--ring));
+  box-shadow: 0 0 0 3px rgb(var(--ring) / 0.1);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.textarea:hover:not(:focus) {
+  border-color: rgb(var(--border));
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.textarea::placeholder {
+  color: rgb(var(--fg) / 0.5);
+}
+
+.textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: rgb(var(--muted));
+  resize: none;
+}
+
+:global(.dark) .textarea {
+  background-color: rgb(var(--muted));
+  border-color: rgb(38 38 42 / 1);
+}
+
+:global(.dark) .textarea:focus {
+  background-color: rgb(var(--bg));
+  border-color: rgb(var(--ring));
+}

@@ -1,0 +1,131 @@
+/* Button Component Styles */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.button:focus-visible {
+  outline: 2px solid rgb(var(--ring));
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Sizes */
+.sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.375rem 0.625rem;
+}
+
+.md {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.icon {
+  padding: 0.5rem;
+}
+
+/* Variants */
+.primary {
+  background-color: rgb(var(--primary));
+  color: rgb(var(--bg));
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: rgba(var(--primary) / 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.secondary {
+  background-color: rgb(var(--muted));
+  color: rgb(var(--fg));
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: rgb(229 231 235 / 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+:global(.dark) .secondary {
+  background-color: rgb(var(--muted));
+}
+
+:global(.dark) .secondary:hover:not(:disabled) {
+  background-color: rgb(38 38 42 / 1);
+}
+
+.outline {
+  border: 1px solid rgb(var(--border));
+  background-color: transparent;
+  color: rgb(var(--fg));
+}
+
+.outline:hover:not(:disabled) {
+  background-color: rgb(var(--muted));
+  border-color: rgb(var(--ring) / 0.5);
+  transform: translateY(-1px);
+}
+
+.default {
+  background-color: transparent;
+  color: rgb(var(--fg));
+}
+
+.default:hover:not(:disabled) {
+  background-color: rgb(var(--muted));
+}
+
+.ghost {
+  background-color: transparent;
+  color: rgb(var(--fg));
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: rgb(var(--muted));
+}
+
+/* Ripple effect */
+.button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.button:active:not(:disabled)::before {
+  width: 300px;
+  height: 300px;
+}

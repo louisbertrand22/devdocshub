@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { cn } from "@/lib/utils";
+import styles from "./select.module.css";
 
 /* --- SVG inline (pas de lucide) --- */
 function IconCheck(props: React.SVGProps<SVGSVGElement>) {
@@ -27,19 +27,13 @@ export const SelectGroup = SelectPrimitive.Group;
 export const SelectValue = SelectPrimitive.Value;
 
 export function SelectTrigger({
-  className,
+  className = "",
   children,
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>) {
   return (
     <SelectPrimitive.Trigger
-      className={cn(
-        "flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm",
-        "ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-        "disabled:cursor-not-allowed disabled:opacity-50",
-        "data-[state=open]:border-primary/50",
-        className
-      )}
+      className={`${styles.trigger} ${className}`}
       {...props}
     >
       {children}
@@ -51,7 +45,7 @@ export function SelectTrigger({
 }
 
 export function SelectContent({
-  className,
+  className = "",
   children,
   position = "popper",
   ...props
@@ -61,22 +55,11 @@ export function SelectContent({
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
-        className={cn(
-          "relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
-          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-          "data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2",
-          className
-        )}
+        className={`${styles.content} ${className}`}
         position={position}
         {...props}
       >
-        <SelectPrimitive.Viewport
-          className={cn(
-            "p-1",
-            position === "popper" &&
-              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
-          )}
-        >
+        <SelectPrimitive.Viewport className={styles.viewport}>
           {children}
         </SelectPrimitive.Viewport>
       </SelectPrimitive.Content>
@@ -85,28 +68,23 @@ export function SelectContent({
 }
 
 export function SelectLabel({
-  className,
+  className = "",
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>) {
-  return <SelectPrimitive.Label className={cn("px-2 py-1.5 text-sm font-semibold", className)} {...props} />;
+  return <SelectPrimitive.Label className={`${styles.label} ${className}`} {...props} />;
 }
 
 export function SelectItem({
-  className,
+  className = "",
   children,
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>) {
   return (
     <SelectPrimitive.Item
-      className={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-sm px-8 py-2 text-sm outline-none",
-        "focus:bg-accent focus:text-accent-foreground",
-        "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        className
-      )}
+      className={`${styles.item} ${className}`}
       {...props}
     >
-      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <span className={styles.itemIndicator}>
         <SelectPrimitive.ItemIndicator>
           <IconCheck />
         </SelectPrimitive.ItemIndicator>
@@ -117,22 +95,22 @@ export function SelectItem({
 }
 
 export function SelectSeparator({
-  className,
+  className = "",
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>) {
-  return <SelectPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-muted", className)} {...props} />;
+  return <SelectPrimitive.Separator className={`${styles.separator} ${className}`} {...props} />;
 }
 
 export function SelectScrollUpButton({
-  className,
+  className = "",
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>) {
-  return <SelectPrimitive.ScrollUpButton className={cn("flex cursor-default items-center justify-center py-1", className)} {...props} />;
+  return <SelectPrimitive.ScrollUpButton className={`${styles.scrollButton} ${className}`} {...props} />;
 }
 
 export function SelectScrollDownButton({
-  className,
+  className = "",
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>) {
-  return <SelectPrimitive.ScrollDownButton className={cn("flex cursor-default items-center justify-center py-1", className)} {...props} />;
+  return <SelectPrimitive.ScrollDownButton className={`${styles.scrollButton} ${className}`} {...props} />;
 }
