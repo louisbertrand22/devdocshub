@@ -79,7 +79,7 @@ pnpm test
 cd services/api
 pip install -r requirements.txt
 pip install pytest pytest-cov httpx
-PYTHONPATH=. pytest --cov=app
+PYTHONPATH=. python -m pytest --cov=app
 ```
 
 ## 🔄 CI/CD Pipeline

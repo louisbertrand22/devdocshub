@@ -170,12 +170,12 @@ pip install -r requirements.txt
 pip install pytest pytest-cov httpx
 
 # Run tests
-PYTHONPATH=. pytest --cov=app --cov-report=term
+PYTHONPATH=. python -m pytest --cov=app --cov-report=term
 
 # Run with database
 export DATABASE_URL=postgresql://devdoc:devdoc@localhost:5432/devdocs
 export JWT_SECRET=test-secret
-PYTHONPATH=. pytest -v
+PYTHONPATH=. python -m pytest -v
 ```
 
 ### Docker Tests
@@ -222,7 +222,7 @@ pnpm build
 ```bash
 cd services/api
 pip install -r requirements.txt
-PYTHONPATH=. pytest -v --tb=short
+PYTHONPATH=. python -m pytest -v --tb=short
 # Review test output
 ```
 

@@ -90,8 +90,9 @@ jobs:
       - name: Run tests
         run: |
           cd services/api
-          PYTHONPATH=. pytest --cov=app --cov-report=xml --cov-report=term
+          python -m pytest --cov=app --cov-report=xml --cov-report=term
         env:
+          PYTHONPATH: .
           DATABASE_URL: postgresql://devdoc:devdoc@localhost:5432/devdocs
           JWT_SECRET: test-secret-key
           JWT_EXPIRE_MINUTES: 60
