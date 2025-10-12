@@ -1,0 +1,372 @@
+/* Auth Panel Component Styles */
+
+.authPanelContainer {
+  margin: 0 auto;
+  display: grid;
+  width: 100%;
+  max-width: 42rem;
+  gap: 1.5rem;
+}
+
+/* Connected User Card */
+.connectedCard {
+  border-style: dashed;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.connectedCard:hover {
+  box-shadow: 
+    0 25px 35px -5px rgba(0, 0, 0, 0.15),
+    0 15px 15px -5px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.connectedHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+}
+
+.connectedTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.userIconWrapper {
+  border-radius: 9999px;
+  background-color: rgb(220 252 231 / 1);
+  padding: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+:global(.dark) .userIconWrapper {
+  background-color: rgb(22 101 52 / 0.3);
+}
+
+.userIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: rgb(22 163 74 / 1);
+}
+
+:global(.dark) .userIcon {
+  color: rgb(134 239 172 / 1);
+}
+
+.sessionBadge {
+  background-color: rgb(220 252 231 / 1);
+  color: rgb(21 128 61 / 1);
+}
+
+:global(.dark) .sessionBadge {
+  background-color: rgb(22 101 52 / 0.3);
+  color: rgb(134 239 172 / 1);
+}
+
+.connectedContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.userInfo {
+  min-width: 0;
+}
+
+.userEmail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(var(--fg) / 0.7);
+}
+
+.userName {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+}
+
+.logoutButton {
+  flex-shrink: 0;
+}
+
+/* Auth Tabs Animation */
+.authTabs {
+  width: 100%;
+}
+
+.tabsList {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 1.5rem;
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: 0.75rem;
+  padding: 0.25rem;
+}
+
+:global(.dark) .tabsList {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+/* Auth Cards */
+.authCard {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 2px solid;
+  border-color: rgba(99, 102, 241, 0.1);
+  transition: all 0.3s ease;
+}
+
+.authCard:hover {
+  border-color: rgba(99, 102, 241, 0.2);
+  box-shadow: 
+    0 25px 35px -5px rgba(0, 0, 0, 0.15),
+    0 15px 15px -5px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+:global(.dark) .authCard {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+:global(.dark) .authCard:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.cardHeader {
+  padding-bottom: 1rem;
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.cardDescription {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(var(--fg) / 0.7);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Error Message */
+.errorMessage {
+  border-radius: 0.375rem;
+  border: 1px solid;
+  border-color: rgb(var(--destructive) / 0.4);
+  background-color: rgb(var(--destructive) / 0.1);
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(var(--destructive));
+  animation: errorSlideIn 0.3s ease-out;
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form Fields */
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.inputIcon {
+  pointer-events: none;
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  height: 1rem;
+  width: 1rem;
+  transform: translateY(-50%);
+  opacity: 0.6;
+  color: rgb(var(--fg));
+}
+
+.inputWithIcon {
+  padding-left: 2.25rem;
+}
+
+.inputWithIcons {
+  padding-left: 2.25rem;
+  padding-right: 2.25rem;
+}
+
+.togglePasswordButton {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  color: rgb(var(--fg) / 0.7);
+  transition: background-color 0.2s ease;
+}
+
+.togglePasswordButton:hover {
+  background-color: rgb(var(--muted));
+}
+
+.toggleIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+/* Password Strength Meter */
+.passwordStrength {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.strengthBar {
+  height: 0.25rem;
+  width: 100%;
+  border-radius: 9999px;
+  background-color: rgb(var(--muted));
+  transition: all 0.3s ease;
+}
+
+.strengthBar.active {
+  background-color: rgb(var(--primary));
+}
+
+.strengthText {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(var(--fg) / 0.7);
+  white-space: nowrap;
+}
+
+/* Forgot Password Link */
+.forgotPasswordSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.forgotPasswordLabel {
+  color: rgb(var(--fg) / 0.7);
+}
+
+.forgotPasswordLink {
+  color: rgb(var(--primary));
+  transition: opacity 0.2s ease;
+}
+
+.forgotPasswordLink:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+/* Submit Button */
+.submitButton {
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.loadingIcon {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Terms Text */
+.termsText {
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(var(--fg) / 0.7);
+}
+
+/* Motion Container */
+.motionContainer {
+  animation: fadeInUp 0.25s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .authPanelContainer {
+    gap: 1rem;
+  }
+  
+  .cardTitle {
+    font-size: 1.25rem;
+  }
+  
+  .connectedHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .connectedContent {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .logoutButton {
+    width: 100%;
+  }
+}
