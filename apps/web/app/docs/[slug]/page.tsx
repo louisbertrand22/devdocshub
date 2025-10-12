@@ -14,7 +14,7 @@ export default function DocViewPage() {
 
   useEffect(() => {
     if (!slug) return
-    apiFetch(`/docs/${slug}`, {}, apiBase, token)
+    apiFetch(`/docs/doc/${slug}`, {}, apiBase, token)
       .then(setDoc)
       .catch(console.error)
   }, [slug])
