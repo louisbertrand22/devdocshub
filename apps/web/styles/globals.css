@@ -168,12 +168,3 @@
     @apply fixed inset-0;
   }
 }
-
-/* ---------------------------------------
-   Social media icons sizing
----------------------------------------- */
-@layer components {
-  .social-icon {
-    @apply h-3 w-3;
-  }
-}
