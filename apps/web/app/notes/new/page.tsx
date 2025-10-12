@@ -1,16 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/store";
 import { apiFetch } from "@/lib/api";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+
+type Doc = {
+  id: string;
+  slug: string;
+  title: string;
+  tech?: string;
+};
 
 export default function NewNotePage() {
   const router = useRouter();
@@ -23,6 +30,39 @@ export default function NewNotePage() {
     is_pinned: false,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [docs, setDocs] = useState<Doc[]>([]);
+  const [loadingDocs, setLoadingDocs] = useState(true);
+
+  // Fetch available documents
+  useEffect(() => {
+    const loadDocs = async () => {
+      if (!token) {
+        setLoadingDocs(false);
+        return;
+      }
+
+      try {
+        const res = await apiFetch("/docs/all", {}, apiBase, token);
+        const normalized: Doc[] = Array.isArray(res) ? res.map((d: any) => ({
+          id: String(d.id),
+          slug: d.slug || "",
+          title: d.title || "Sans titre",
+          tech: d.tech,
+        })) : [];
+        setDocs(normalized);
+      } catch (e: any) {
+        toast({
+          title: "Erreur de chargement",
+          description: "Impossible de charger la liste des documents.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingDocs(false);
+      }
+    };
+
+    loadDocs();
+  }, [token, apiBase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,21 +134,39 @@ export default function NewNotePage() {
       <div className="max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="rounded-xl border bg-background p-6 space-y-4">
-            {/* Doc ID Field */}
+            {/* Document Selection */}
             <div className="space-y-2">
               <Label htmlFor="doc_id">
-                ID du document (UUID) <span className="text-destructive">*</span>
+                Document <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="doc_id"
-                value={form.doc_id}
-                onChange={(e) => setForm({ ...form, doc_id: e.target.value })}
-                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                required
-                disabled={submitting}
-              />
+              {loadingDocs ? (
+                <div className="text-sm text-muted-foreground">
+                  Chargement des documents...
+                </div>
+              ) : docs.length === 0 ? (
+                <div className="text-sm text-muted-foreground">
+                  Aucun document disponible. Veuillez d'abord créer un document.
+                </div>
+              ) : (
+                <Select
+                  value={form.doc_id}
+                  onValueChange={(value) => setForm({ ...form, doc_id: value })}
+                  disabled={submitting}
+                >
+                  <SelectTrigger id="doc_id">
+                    <SelectValue placeholder="Sélectionner un document" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {docs.map((doc) => (
+                      <SelectItem key={doc.id} value={doc.id}>
+                        {doc.title} {doc.tech && `(${doc.tech})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
               <p className="text-sm text-muted-foreground">
-                L'UUID du document auquel cette note sera associée.
+                Sélectionnez le document auquel cette note sera associée.
               </p>
             </div>
 
