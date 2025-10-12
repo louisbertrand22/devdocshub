@@ -220,6 +220,13 @@
   height: 2.5rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
+  background: #000000;
+  color: #ffffff;
+}
+
+.dark .app-header__icon-btn {
+  background: #ffffff;
+  color: #000000;
 }
 
 @media (max-width: 640px) {
@@ -242,11 +249,11 @@
   color: white;
   background: #ef4444;
   border-radius: 9999px;
-  border: 2px solid white;
+  border: 2px solid #000000;
 }
 
 .dark .app-header__notification-badge {
-  border-color: #111827;
+  border-color: #ffffff;
 }
 
 .app-header__theme-icon {
