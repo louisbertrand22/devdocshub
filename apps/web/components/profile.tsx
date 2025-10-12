@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Calendar, Shield, Loader2 } from "lucide-react";
+import { User, Mail, Calendar, Shield, Loader2, FileText, Folder, StickyNote } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/store";
@@ -17,10 +17,18 @@ type UserDetails = {
   created_at?: string;
 };
 
+type UserStats = {
+  docs?: number;
+  collections?: number;
+  notes?: number;
+};
+
 export default function Profile() {
   const { token, apiBase, user } = useAuth();
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [stats, setStats] = useState<UserStats>({});
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,6 +52,38 @@ export default function Profile() {
 
     fetchUserDetails();
   }, [token, apiBase]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!token || !userDetails?.id) {
+        setStatsLoading(false);
+        return;
+      }
+
+      setStatsLoading(true);
+      try {
+        const [docsCount, collectionsCount, notesCount] = await Promise.all([
+          apiFetch<number>("/docs/count", {}, apiBase, token).catch(() => undefined),
+          apiFetch<number>("/collections/count/mine", {}, apiBase, token).catch(() => undefined),
+          apiFetch<number>(`/notes/count/mine?uuid=${userDetails.id}`, {}, apiBase, token).catch(() => undefined),
+        ]);
+
+        setStats({
+          docs: docsCount,
+          collections: collectionsCount,
+          notes: notesCount,
+        });
+      } catch (e: any) {
+        console.error("Error fetching stats:", e);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    if (userDetails?.id) {
+      fetchStats();
+    }
+  }, [token, apiBase, userDetails?.id]);
 
   if (loading) {
     return (
@@ -180,6 +220,68 @@ export default function Profile() {
           </Card>
         </motion.div>
       </div>
+
+      {/* Section statistiques */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.5 }}
+        className="mt-8"
+      >
+        <h3 className="text-lg font-semibold mb-4">Mes statistiques</h3>
+        <div className="profile-details-grid">
+          <Card className="profile-info-card">
+            <CardHeader className="profile-info-header">
+              <CardTitle className="profile-info-title">
+                <FileText className="h-5 w-5" />
+                <span>Documents</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {statsLoading ? (
+                <div className="h-8 w-16 animate-pulse rounded-md bg-muted" />
+              ) : (
+                <p className="profile-info-value">{stats.docs ?? "—"}</p>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">Total documents</p>
+            </CardContent>
+          </Card>
+
+          <Card className="profile-info-card">
+            <CardHeader className="profile-info-header">
+              <CardTitle className="profile-info-title">
+                <Folder className="h-5 w-5" />
+                <span>Collections</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {statsLoading ? (
+                <div className="h-8 w-16 animate-pulse rounded-md bg-muted" />
+              ) : (
+                <p className="profile-info-value">{stats.collections ?? "—"}</p>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">Mes collections</p>
+            </CardContent>
+          </Card>
+
+          <Card className="profile-info-card">
+            <CardHeader className="profile-info-header">
+              <CardTitle className="profile-info-title">
+                <StickyNote className="h-5 w-5" />
+                <span>Notes</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {statsLoading ? (
+                <div className="h-8 w-16 animate-pulse rounded-md bg-muted" />
+              ) : (
+                <p className="profile-info-value">{stats.notes ?? "—"}</p>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">Mes notes</p>
+            </CardContent>
+          </Card>
+        </div>
+      </motion.div>
     </div>
   );
 }

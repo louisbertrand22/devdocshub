@@ -45,6 +45,18 @@ def count_collections():
     # Si chez toi ça renvoie une liste, remplace par: return len(get_count_collections())
     return len(get_count_collections())
 
+@router.get(
+    "/count/mine",
+    response_model=int,
+    dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
+)
+def count_my_collections(current_user: User = Depends(get_current_user)):
+    """
+    Renvoie le nombre de collections de l'utilisateur connecté.
+    """
+    rows = list_collections(owner_id=current_user.id)
+    return len(list(rows))
+
 # --- Listing / création ---
 
 @router.get(
