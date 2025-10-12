@@ -184,7 +184,9 @@ export default function NotesPage() {
           <Button onClick={load} variant="outline">
             <IconRefresh className="w-4 h-4 mr-2" /> Actualiser
           </Button>
-          {/* <Button>Nouvelle note</Button> */}
+          <Link href="/notes/new">
+            <Button>Nouvelle note</Button>
+          </Link>
         </div>
       </div>
 
