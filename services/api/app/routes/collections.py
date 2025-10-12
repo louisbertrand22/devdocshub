@@ -3,7 +3,6 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.utils.auth_dep import require_roles, get_current_user
-from app.models.user import User  # get_user_by_email plus nécessaire ici
 from app.crud.collection_doc import (
     add_doc_to_collection,
     remove_doc_from_collection,
@@ -50,11 +49,11 @@ def count_collections():
     response_model=int,
     dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
 )
-def count_my_collections(current_user: User = Depends(get_current_user)):
+def count_my_collections(current_user: dict = Depends(get_current_user)):
     """
     Renvoie le nombre de collections de l'utilisateur connecté.
     """
-    rows = list_collections(owner_id=current_user.id)
+    rows = list_collections(owner_id=current_user["id"])
     return len(list(rows))
 
 # --- Listing / création ---
@@ -69,9 +68,9 @@ def get_all_collections(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
     only_mine: bool = Query(False, description="Ne lister que mes collections"),
-    current_user: User = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
-    owner_id = current_user.id if only_mine else None
+    owner_id = current_user["id"] if only_mine else None
     rows = list_collections(owner_id=owner_id, q=q, page=page, size=size)
     return rows
 
@@ -84,17 +83,17 @@ def get_all_collections(
 )
 def create_new_collection(
     collection: CollectionCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
-    db_collection = create_collection(owner_id=current_user.id, collection=collection)
+    db_collection = create_collection(owner_id=current_user["id"], collection=collection)
     return db_collection
 
 # --- Helpers ---
 
-def _ensure_owner_or_admin(collection: Collection, current_user: User):
-    roles = getattr(current_user, "roles", []) or []
-    is_admin = ("admin" in roles) if isinstance(roles, (list, set, tuple)) else roles == "admin"
-    if collection.owner_id != current_user.id and not is_admin:
+def _ensure_owner_or_admin(collection: Collection, current_user: dict):
+    role = current_user.get("role", "user")
+    is_admin = role == "admin"
+    if collection.owner_id != current_user["id"] and not is_admin:
         raise HTTPException(status_code=403, detail="Not allowed")
 
 # --- CRUD par id ---
@@ -119,7 +118,7 @@ def get_collection_by_id(collection_id: UUID):
 def update_collection_by_id(
     collection_id: UUID,
     collection: CollectionUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
     db_collection = get_collection(collection_id)
     if not db_collection:
@@ -136,7 +135,7 @@ def update_collection_by_id(
 )
 def delete_collection_by_id(
     collection_id: UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
     db_collection = get_collection(collection_id)
     if not db_collection:
@@ -158,7 +157,7 @@ def delete_collection_by_id(
 def link_doc(
     collection_id: UUID,
     payload: CollectionDocLink,
-    current_user: User = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
     col = get_collection(collection_id)
     if not col:
@@ -179,7 +178,7 @@ def link_doc(
 def unlink_doc(
     collection_id: UUID,
     doc_id: UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
     col = get_collection(collection_id)
     if not col:
