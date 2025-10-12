@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useAuth } from "@/lib/store";
 import "./AppSidebar.css";
 
 type Tab = "dashboard" | "docs" | "notes" | "collections" | "users" | "auth" | "profile";
@@ -19,6 +20,8 @@ export function AppSidebar({
   active: Tab;
   onSelect: (t: Tab) => void;
 }) {
+  const { user } = useAuth();
+
   // Icons SVG inline
   const DashboardIcon = () => (
     <svg className="app-sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +65,7 @@ export function AppSidebar({
     </svg>
   );
 
-  const menuItems: MenuItem[] = [
+  const allMenuItems: MenuItem[] = [
     {
       key: "dashboard",
       label: "Tableau de bord",
@@ -102,6 +105,11 @@ export function AppSidebar({
       icon: AuthIcon,
     },
   ];
+
+  // Filter out the "auth" menu item if the user is logged in
+  const menuItems = user
+    ? allMenuItems.filter((item) => item.key !== "auth")
+    : allMenuItems;
 
   return (
     <aside className="app-sidebar">
