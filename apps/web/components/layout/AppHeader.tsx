@@ -91,7 +91,7 @@ export function AppHeader({
             >
               {/* Icône cloche SVG inline */}
               <svg
-                className="h-5 w-5"
+                className="h-6 w-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
