@@ -1,4 +1,4 @@
-import "./PageWrapper.css";
+import { cn } from "@/lib/utils";
 
 interface PageWrapperProps {
   title: string;
@@ -8,34 +8,17 @@ interface PageWrapperProps {
   className?: string;
 }
 
-export function PageWrapper({
-  title,
-  description,
-  children,
-  actions,
-  className = "",
-}: PageWrapperProps) {
+export function PageWrapper({ title, description, children, actions, className }: PageWrapperProps) {
   return (
-    <div className={`page-wrapper ${className}`}>
-      {/* En-tête de page */}
-      <div className="page-wrapper__header">
-        <div className="page-wrapper__header-content">
-          <div className="page-wrapper__title-section">
-            <h1 className="page-wrapper__title">{title}</h1>
-            {description && (
-              <p className="page-wrapper__description">{description}</p>
-            )}
-          </div>
-          {actions && (
-            <div className="page-wrapper__actions">{actions}</div>
-          )}
+    <div className={cn("flex flex-col gap-8", className)}>
+      <header className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-1.5">
+          <h1>{title}</h1>
+          {description && <p className="text-fg-muted">{description}</p>}
         </div>
-      </div>
-
-      {/* Contenu principal */}
-      <div className="page-wrapper__content">
-        {children}
-      </div>
+        {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+      </header>
+      <div>{children}</div>
     </div>
   );
 }

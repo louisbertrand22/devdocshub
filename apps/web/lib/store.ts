@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { DEFAULT_API_BASE, apiFetch } from "./api";
 
-type User = { id?: string; email?: string; username?: string; name?: string } | null;
+type User = { id?: string; email?: string; username?: string; name?: string; role?: string } | null;
 
 type AuthState = {
   token: string | null;

@@ -93,3 +93,6 @@ __pycache__/
 
 # brainstorming mockups
 .superpowers/
+
+# captures de vérification visuelle
+apps/web/screenshots/

@@ -1,16 +1,11 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import Providers from "./providers";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { themeInitScript } from "@/lib/theme";
 import "@/styles/globals.css";
-
-// Remplacé par SiteChrome (rendu serveur) en Task 6
-const AppShell = dynamic(() => import("@/components/layout/Shell"), {
-  ssr: false,
-});
 
 export const metadata: Metadata = {
   title: "DevDocsHub",
@@ -36,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
-          <AppShell>{children as any}</AppShell>
+          <SiteChrome>{children}</SiteChrome>
         </Providers>
       </body>
     </html>
