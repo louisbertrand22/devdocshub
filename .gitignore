@@ -90,3 +90,6 @@ services/api/.env.production.local
 # Python cache
 __pycache__/
 *.py[cod]
+
+# brainstorming mockups
+.superpowers/
