@@ -1,171 +1,120 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* ---------------------------------------
-   Design tokens (light/dark)
+   Tokens — light (appliqué si <html> n'a pas .dark)
 ---------------------------------------- */
+:root {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface-2: #eef1f4;
+  --border: #d8dee4;
+  --fg: #1f2328;
+  --fg-muted: #59636e;
+  --accent: #0e7490;
+  --accent-fg: #ffffff;
+  --accent-subtle: rgb(14 116 144 / 0.08);
+  --accent-border: rgb(14 116 144 / 0.30);
+  --success: #1a7f37;
+  --warning: #9a6700;
+  --danger: #cf222e;
+  color-scheme: light;
+}
+
+/* ---------------------------------------
+   Tokens — dark (défaut)
+---------------------------------------- */
+.dark {
+  --bg: #0f1115;
+  --surface: #161a20;
+  --surface-2: #1c2129;
+  --border: #262b33;
+  --fg: #e6e8eb;
+  --fg-muted: #8b93a1;
+  --accent: #5ccfe6;
+  --accent-fg: #051418;
+  --accent-subtle: rgb(92 207 230 / 0.10);
+  --accent-border: rgb(92 207 230 / 0.35);
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-accent-border: var(--accent-border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  /* Alias de compatibilité : classes façon shadcn déjà utilisées dans les pages
+     (text-muted-foreground ×116, text-primary ×25…). Retirés en phase 3. */
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--fg-muted);
+  --color-primary: var(--fg);
+  --color-primary-foreground: var(--bg);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: #ffffff;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
+
 @layer base {
-  :root {
-    --bg: 255 255 255;         /* white */
-    --fg: 17 24 39;            /* gray-900 */
-    --muted: 249 250 251;      /* gray-50 */
-    --border: 229 231 235;     /* gray-200 */
-    --ring: 59 130 246;        /* blue-500 */
-    --primary: 0 0 0;          /* black */
-    --destructive: 239 68 68;  /* red-500 */
-  }
-
-  .dark {
-    --bg: 10 10 12;            /* near black */
-    --fg: 229 231 235;         /* gray-200 */
-    --muted: 22 22 26;         /* dark surface */
-    --border: 38 38 42;        /* zinc-800 */
-    --ring: 37 99 235;         /* blue-600 */
-    --primary: 255 255 255;    /* white */
-    --destructive: 239 68 68;  /* red-500 */
-  }
-
-  html, body, #__next {
-    height: 100%;
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply antialiased;
-    color: rgb(var(--fg));
-    background-color: rgb(var(--bg));
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    @apply bg-bg font-sans text-fg;
+    font-size: 15px;
+    line-height: 1.6;
   }
 
-  *:focus-visible {
-    outline: 2px solid rgb(var(--ring));
+  h1 { @apply text-[28px] font-bold leading-tight tracking-tight; }
+  h2 { @apply text-xl font-semibold tracking-tight; }
+  h3 { @apply text-base font-semibold; }
+
+  code, kbd, pre, samp { @apply font-mono; }
+
+  ::selection { background-color: var(--accent-border); }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
-}
 
-/* ---------------------------------------
-   Typography & elements
----------------------------------------- */
-@layer base {
-  h1 { @apply text-3xl md:text-4xl font-bold tracking-tight; }
-  h2 { @apply text-2xl md:text-3xl font-semibold tracking-tight; }
-  h3 { @apply text-xl md:text-2xl font-semibold; }
-  h4 { @apply text-lg font-semibold; }
-  p  { @apply leading-7; }
-  small { @apply text-sm text-gray-500 dark:text-gray-400; }
-
-  a {
-    @apply underline decoration-[1.5px] underline-offset-2;
-    color: rgb(var(--ring));
-  }
-  a:hover { @apply opacity-90; }
-
-  code, kbd, pre, samp {
-    @apply font-mono;
-  }
-}
-
-/* ---------------------------------------
-   Cards / Panels (helpers)
----------------------------------------- */
-@layer components {
-  .panel {
-    @apply rounded-xl border p-4 bg-white dark:bg-neutral-900
-           border-gray-200 dark:border-neutral-800 shadow-sm;
-  }
-  .muted {
-    color: rgb(var(--fg) / 0.7);
-  }
-}
-
-/* ---------------------------------------
-   Forms (inputs, selects, textareas)
----------------------------------------- */
-@layer components {
-  .input {
-    @apply w-full rounded-md border px-3 py-2 text-sm
-           bg-white dark:bg-neutral-900
-           border-gray-200 dark:border-neutral-800
-           placeholder:text-gray-400
-           focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))];
-  }
-  .btn {
-    @apply inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium
-           transition;
-  }
-  .btn-primary {
-    @apply btn bg-black text-white hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/90;
-  }
-  .btn-secondary {
-    @apply btn bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-neutral-800 dark:text-gray-100 dark:hover:bg-neutral-700;
-  }
-  .btn-danger {
-    @apply btn bg-red-600 text-white hover:bg-red-600/90;
-  }
-}
-
-/* ---------------------------------------
-   Tables (generic)
----------------------------------------- */
-@layer components {
-  table { @apply w-full border-collapse; }
-  thead th {
-    @apply text-left text-sm font-medium text-gray-600 dark:text-gray-300 border-b
-           border-gray-200 dark:border-neutral-800;
-  }
-  tbody td {
-    @apply align-top text-sm py-2;
-  }
-  tbody tr {
-    @apply border-b border-gray-200 dark:border-neutral-800;
-  }
-  tbody tr:hover {
-    @apply bg-gray-50 dark:bg-neutral-800/50;
-  }
-}
-
-/* ---------------------------------------
-   Markdown / prose
----------------------------------------- */
-@layer components {
-  .prose {
-    @apply max-w-none;
-  }
-  .prose h1, .prose h2, .prose h3 { @apply mt-6 mb-3; }
-  .prose p { @apply my-4; }
-  .prose ul { @apply list-disc pl-6 my-4; }
-  .prose ol { @apply list-decimal pl-6 my-4; }
-  .prose code { @apply px-1 py-0.5 rounded bg-gray-100 dark:bg-neutral-800; }
-  .prose pre {
-    @apply p-4 rounded-lg bg-gray-100 dark:bg-neutral-900 overflow-x-auto border
-           border-gray-200 dark:border-neutral-800;
-  }
-  .prose blockquote {
-    @apply border-l-4 pl-4 italic text-gray-600 dark:text-gray-300;
-  }
-}
-
-/* ---------------------------------------
-   Scrollbar (WebKit & Firefox)
----------------------------------------- */
-@layer utilities {
-  /* Firefox */
   * {
-    scrollbar-color: rgba(0,0,0,.25) transparent;
+    scrollbar-color: var(--border) transparent;
     scrollbar-width: thin;
   }
-  /* WebKit */
-  ::-webkit-scrollbar        { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track  { background: transparent; }
-  ::-webkit-scrollbar-thumb  { background: rgba(0,0,0,.25); border-radius: 9999px; }
-  .dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.25); }
 }
 
-/* ---------------------------------------
-   Dialog overlay fix (for headless dialog)
----------------------------------------- */
-@layer utilities {
-  .fixed-full {
-    @apply fixed inset-0;
-  }
+/* Contenu markdown (en attendant la refonte de la page doc en phase 2) */
+@layer components {
+  .prose { @apply max-w-none; }
+  .prose h1, .prose h2, .prose h3 { @apply mb-3 mt-8; }
+  .prose p { @apply my-4 text-fg; }
+  .prose a { @apply text-accent underline decoration-accent-border underline-offset-2; }
+  .prose ul { @apply my-4 list-disc pl-6; }
+  .prose ol { @apply my-4 list-decimal pl-6; }
+  .prose :not(pre) > code { @apply rounded border border-border bg-surface-2 px-1 py-0.5 text-[0.9em]; }
+  .prose pre { @apply my-4 overflow-x-auto rounded-lg border border-border bg-surface p-4 text-[13px]; }
+  .prose blockquote { @apply border-l-2 border-accent pl-4 text-fg-muted; }
 }
