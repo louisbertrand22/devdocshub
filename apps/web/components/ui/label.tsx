@@ -1,7 +1,7 @@
 import * as React from "react";
-import styles from "./label.module.css";
+import { cn } from "@/lib/utils";
 
-export function Label({ className = "", ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
-  return <label className={`${styles.label} ${className}`} {...props} />;
+export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
+  return <label className={cn("text-[13px] font-medium text-fg", className)} {...props} />;
 }
 export default Label;

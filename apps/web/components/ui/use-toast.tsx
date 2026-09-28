@@ -12,28 +12,25 @@ type ToastInput = {
 };
 
 function renderToast({ title, description, action, variant }: ToastInput) {
-  // Styles basés sur Tailwind + variantes
   const variantClasses: Record<Variant, string> = {
-    default: "bg-background text-foreground border",
-    destructive: "bg-destructive text-destructive-foreground",
-    success: "bg-emerald-600 text-white",
-    warning: "bg-amber-500 text-black",
-    info: "bg-primary text-primary-foreground",
+    default: "border-l-border",
+    destructive: "border-l-danger",
+    success: "border-l-success",
+    warning: "border-l-warning",
+    info: "border-l-accent",
   };
 
   return (
-    <div 
+    <div
       className={[
-        "w-full rounded-xl p-3 shadow-lg",
-        "flex items-start gap-3",
-        "ring-1 ring-black/5",
+        "flex w-[356px] max-w-full items-start gap-3 rounded-lg border border-l-4 border-border bg-surface p-3 text-fg shadow-xl",
         variantClasses[variant || "default"],
       ].join(" ")}
     >
       <div className="flex-1 min-w-0">
         {title && <div className="font-semibold leading-5">{title}</div>}
         {description && (
-          <div className="mt-0.5 text-sm opacity-90 leading-5">{description}</div>
+          <div className="mt-0.5 text-sm leading-5 text-fg-muted">{description}</div>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}

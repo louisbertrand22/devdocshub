@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { createPortal } from "react-dom";
-import styles from "./dialog.module.css";
+import { cn } from "@/lib/utils";
 
 type DialogContextValue = {
   open: boolean;
@@ -146,7 +146,7 @@ export function DialogContent({
   const overlay = (
     <div
       aria-hidden
-      className={styles.overlay}
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
       onMouseDown={() => {
         onPointerDownOutside?.();
         setOpen(false);
@@ -165,7 +165,10 @@ export function DialogContent({
           {...rest}
           ref={contentRef}
           tabIndex={-1}
-          className={`${styles.content} ${className}`}
+          className={cn(
+            "w-full max-w-lg rounded-lg border border-border bg-surface p-6 text-fg shadow-2xl outline-none",
+            className,
+          )}
         >
           {children}
         </div>
@@ -180,21 +183,21 @@ export function DialogHeader({
   className = "",
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={`${styles.header} ${className}`} {...rest} />;
+  return <div className={cn("mb-4 flex flex-col gap-1.5", className)} {...rest} />;
 }
 
 export function DialogTitle({
   className = "",
   ...rest
 }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h2 className={`${styles.title} ${className}`} {...rest} />;
+  return <h2 className={cn("text-lg font-semibold tracking-tight", className)} {...rest} />;
 }
 
 export function DialogDescription({
   className = "",
   ...rest
 }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={`${styles.description} ${className}`} {...rest} />;
+  return <p className={cn("text-sm text-fg-muted", className)} {...rest} />;
 }
 
 /**
