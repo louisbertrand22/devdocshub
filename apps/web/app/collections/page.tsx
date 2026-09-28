@@ -1,12 +1,14 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { DataTable } from "../../components/data-table"
 import { Button } from "../../components/ui/button"
 import { apiFetch } from "../../lib/api"
 import { useAuth } from "../../lib/store"
 
 export default function CollectionsPage() {
+  const router = useRouter()
   const { apiBase, token } = useAuth()
   const [rows, setRows] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -32,7 +34,10 @@ export default function CollectionsPage() {
     <div className="space-y-6">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
         <h1 style={{ fontSize: 20, fontWeight: 600 }}>Collections</h1>
-        <Button onClick={load} variant="outline">{loading ? "Loading..." : "Refresh"}</Button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button onClick={() => router.push("/collections/add")}>Add Collection</Button>
+          <Button onClick={load} variant="outline">{loading ? "Loading..." : "Refresh"}</Button>
+        </div>
       </div>
 
       {!token && <div style={{ color: "#b91c1c" }}>Non authentifié. Va sur <a href="/auth">/auth</a> pour te connecter.</div>}
