@@ -1,10 +1,13 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-import Providers from "./providers"; // ✅ bon import
-import "@/styles/globals.css";
 import dynamic from "next/dynamic";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import Providers from "./providers";
+import { themeInitScript } from "@/lib/theme";
+import "@/styles/globals.css";
 
-// On charge le Shell côté client (useRouter/usePathname)
+// Remplacé par SiteChrome (rendu serveur) en Task 6
 const AppShell = dynamic(() => import("@/components/layout/Shell"), {
   ssr: false,
 });
@@ -23,8 +26,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
-      <body className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <html
+      lang="fr"
+      className={`dark ${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body>
         <Providers>
           <AppShell>{children as any}</AppShell>
         </Providers>

@@ -1,40 +1,39 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { THEME_STORAGE_KEY, type Theme } from "@/lib/theme";
+
+function readTheme(): Theme {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function applyTheme(theme: Theme) {
+  document.documentElement.classList.toggle("dark", theme === "dark");
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // stockage indisponible : le choix vaut pour la session en cours
+  }
+}
 
 export function useTheme() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  // "dark" = valeur rendue par le serveur ; corrigée après montage
+  const [theme, setThemeState] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setThemeState(readTheme());
     setMounted(true);
-    // Charger le thème depuis localStorage
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-    
-    const initialTheme = savedTheme || systemTheme;
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
   }, []);
 
-  const toggleTheme = () => {
-    if (!mounted) return;
-    
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-  };
+  const setTheme = useCallback((next: Theme) => {
+    applyTheme(next);
+    setThemeState(next);
+  }, []);
 
-  const setThemeMode = (mode: "light" | "dark") => {
-    if (!mounted) return;
-    
-    setTheme(mode);
-    localStorage.setItem("theme", mode);
-    document.documentElement.classList.toggle("dark", mode === "dark");
-  };
+  const toggleTheme = useCallback(() => {
+    setTheme(readTheme() === "dark" ? "light" : "dark");
+  }, [setTheme]);
 
-  return { theme, toggleTheme, setTheme: setThemeMode, mounted };
+  return { theme, toggleTheme, setTheme, mounted };
 }
