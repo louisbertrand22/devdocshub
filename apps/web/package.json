@@ -9,6 +9,7 @@
     "test": "node --test \"lib/**/*.test.ts\" \"styles/**/*.test.ts\"",
     "screenshots": "node scripts/screenshots.mjs",
     "flows": "node scripts/flows.mjs",
+    "flows:isolated": "node scripts/demo/flows-isolated.mjs",
     "landing:capture": "node scripts/demo/capture-hero.mjs"
   },
   "dependencies": {

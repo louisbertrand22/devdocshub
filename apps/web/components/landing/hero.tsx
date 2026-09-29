@@ -29,13 +29,16 @@ export function Hero() {
                 <span key={i} className="size-2.5 rounded-full bg-surface-2" />
               ))}
             </div>
+            {/* Pas de `priority` : il préchargerait les deux variantes. En lazy, le navigateur ne
+                télécharge pas celle qui est masquée (display: none) par le thème. */}
             <Image
               data-hero
               src="/landing/hero-dark.png"
               alt={ALT}
               width={1440}
               height={900}
-              priority
+              loading="lazy"
+              fetchPriority="high"
               sizes="(min-width: 1024px) 60vw, 100vw"
               className="hidden w-full dark:block"
             />
@@ -45,7 +48,8 @@ export function Hero() {
               alt={ALT}
               width={1440}
               height={900}
-              priority
+              loading="lazy"
+              fetchPriority="high"
               sizes="(min-width: 1024px) 60vw, 100vw"
               className="block w-full dark:hidden"
             />

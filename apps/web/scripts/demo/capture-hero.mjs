@@ -1,30 +1,15 @@
 // Stack démo → seed → capture de la page doc du guide Nginx (dark + light) → public/landing/.
 // Usage : pnpm --filter web landing:capture
-import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 import { seed, waitForApi } from "./seed.mjs";
+import { DEMO_API as API, DEMO_WEB as WEB, waitForWeb, withDemoStack } from "./stack.mjs";
 
-const API = "http://localhost:8100";
-const WEB = "http://localhost:3100";
 const HERO_SLUG = "reverse-proxy-tls-lets-encrypt";
 const EXPECTED_DOCS = 10;
-const root = fileURLToPath(new URL("../../../../", import.meta.url));
 const out = fileURLToPath(new URL("../../public/landing/", import.meta.url));
-const compose = (args) => execSync(`docker compose -f docker-compose.demo.yml ${args}`, { cwd: root, stdio: "inherit" });
 
-async function waitForWeb(timeoutMs = 120_000) {
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    try { if ((await fetch(`${WEB}/auth`)).ok) return; } catch {}
-    await new Promise((r) => setTimeout(r, 1000));
-  }
-  throw new Error("web démo injoignable");
-}
-
-compose("down -v --remove-orphans"); // base toujours vide au départ
-try {
-  compose("up -d --build");
+await withDemoStack(async () => {
   await waitForApi(API);
   await waitForWeb();
   const { token, ids } = await seed(API);
@@ -52,6 +37,4 @@ try {
   } finally {
     await browser.close();
   }
-} finally {
-  compose("down -v --remove-orphans"); // toujours nettoyer
-}
+});
