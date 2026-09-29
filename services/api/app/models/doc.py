@@ -21,13 +21,16 @@ class Doc(Base):
 
     collections = relationship("Collection", secondary="collection_docs", back_populates="docs")
 
-def get_all_docs(q: Optional[str] = None, tech: Optional[str] = None, page: int = 1, size: int = 20):
+def get_all_docs(q: Optional[str] = None, tech: Optional[str] = None, page: int = 1, size: Optional[int] = 20):
+    """Docs les plus récents d'abord ; size=None renvoie tout (sans pagination)."""
     session = next(get_session())
-    query = session.query(Doc)
+    query = session.query(Doc).order_by(Doc.created_at.desc())
     if q:
         query = query.filter((Doc.title.ilike(f"%{q}%")) | (Doc.content.ilike(f"%{q}%")))
     if tech:
         query = query.filter(Doc.tech == tech)
+    if size is None:
+        return query.all()
     return query.offset((page - 1) * size).limit(size).all()
 
 def get_doc_by_id(doc_id: SAUUID):

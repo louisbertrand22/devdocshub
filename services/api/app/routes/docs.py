@@ -23,9 +23,9 @@ async def count_docs():
     return len(get_count_docs())
 
 @router.get("/all", dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def list_docs():
-    alldocs = get_all_docs()
-    return alldocs
+async def list_all_docs():
+    # Liste complète (sidebar, palette ⌘K, dashboard) : sans la limite de 20
+    return get_all_docs(size=None)
 
 @router.get("/", response_model=List[DocOut], dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
 def list_docs(
