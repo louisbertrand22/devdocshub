@@ -1,25 +1,15 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { PageWrapper } from "@/components/layout/PageWrapper"
-import DocForm from "@/components/forms/doc-form"
+import { useRouter } from "next/navigation";
+import DocForm from "@/components/forms/doc-form";
+import { PageHeader } from "@/components/page/page-header";
 
 export default function NewDocPage() {
-  const router = useRouter()
-
-  const handleCreated = () => {
-    // Navigate to docs list after successful creation
-    router.push("/docs")
-  }
-
+  const router = useRouter();
   return (
-    <PageWrapper
-      title="Create New Document"
-      description="Add a new documentation entry to your collection"
-    >
-      <div className="max-w-2xl">
-        <DocForm onCreated={handleCreated} />
-      </div>
-    </PageWrapper>
-  )
+    <div className="mx-auto flex max-w-2xl flex-col gap-6">
+      <PageHeader eyebrow="docs / nouveau" title="Nouveau doc" description="Rédige en markdown ; il apparaîtra dans ~/techno." />
+      <DocForm onCreated={() => router.push("/docs")} onCancel={() => router.push("/docs")} />
+    </div>
+  );
 }

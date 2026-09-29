@@ -30,7 +30,8 @@ class Collection(Base):
 def list_collections(owner_id: Optional[UUID] = None, q: Optional[str] = None,
                      page: int = 1, size: int = 20) -> Iterable[Collection]:
     db = next(get_session())
-    res = db.query(Collection)
+    # Plus récentes d'abord : la première page contient les dernières créées
+    res = db.query(Collection).order_by(Collection.created_at.desc())
     if owner_id:
         res = res.filter(Collection.owner_id == owner_id)
     if q:
