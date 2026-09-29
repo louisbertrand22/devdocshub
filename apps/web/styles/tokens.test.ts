@@ -46,3 +46,8 @@ for (const [name, vars] of Object.entries(themes)) {
     });
   }
 }
+
+test("no shadcn compatibility aliases remain in the theme", () => {
+  const aliases = ["background", "foreground", "muted", "muted-foreground", "primary", "primary-foreground", "destructive", "destructive-foreground"];
+  for (const a of aliases) assert.ok(!css.includes(`--color-${a}:`), `--color-${a} still defined`);
+});

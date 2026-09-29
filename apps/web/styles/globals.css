@@ -57,17 +57,6 @@
   --color-warning: var(--warning);
   --color-danger: var(--danger);
 
-  /* Alias de compatibilité : classes façon shadcn déjà utilisées dans les pages
-     (text-muted-foreground ×116, text-primary ×25…). Retirés en phase 3. */
-  --color-background: var(--bg);
-  --color-foreground: var(--fg);
-  --color-muted: var(--surface-2);
-  --color-muted-foreground: var(--fg-muted);
-  --color-primary: var(--fg);
-  --color-primary-foreground: var(--bg);
-  --color-destructive: var(--danger);
-  --color-destructive-foreground: #ffffff;
-
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
