@@ -1,7 +1,12 @@
 import * as React from "react";
-import styles from "./textarea.module.css";
+import { cn } from "@/lib/utils";
+import { fieldClasses } from "./input";
 
-export function Textarea({ className = "", ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className={`${styles.textarea} ${className}`} {...props} />;
-}
+export const Textarea = React.forwardRef<
+  HTMLTextAreaElement,
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>
+>(({ className, ...props }, ref) => (
+  <textarea ref={ref} className={cn(fieldClasses, "min-h-24 py-2 leading-relaxed", className)} {...props} />
+));
+Textarea.displayName = "Textarea";
 export default Textarea;

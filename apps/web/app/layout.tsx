@@ -1,13 +1,11 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-import Providers from "./providers"; // ✅ bon import
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import Providers from "./providers";
+import { SiteChrome } from "@/components/layout/site-chrome";
+import { themeInitScript } from "@/lib/theme";
 import "@/styles/globals.css";
-import dynamic from "next/dynamic";
-
-// On charge le Shell côté client (useRouter/usePathname)
-const AppShell = dynamic(() => import("@/components/layout/Shell"), {
-  ssr: false,
-});
 
 export const metadata: Metadata = {
   title: "DevDocsHub",
@@ -23,10 +21,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
-      <body className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <html
+      lang="fr"
+      className={`dark ${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body>
         <Providers>
-          <AppShell>{children as any}</AppShell>
+          <SiteChrome year={new Date().getFullYear()}>{children}</SiteChrome>
         </Providers>
       </body>
     </html>

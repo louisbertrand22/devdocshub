@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useDocsStore } from "@/lib/docs-store";
 
 export default function DocForm({ onCreated }: { onCreated?: () => void }) {
   const { apiBase, token } = useAuth();
@@ -28,6 +29,7 @@ export default function DocForm({ onCreated }: { onCreated?: () => void }) {
       await apiFetch("/docs/add", { method: "POST", body: JSON.stringify(payload) }, apiBase, token);
       toast({ title: "Document created" });
       setForm({ title: "", slug: "", tech: "", content: "", tags: "" });
+      useDocsStore.getState().invalidate();
       onCreated?.();
     } catch (e: any) {
       toast({ title: "Create failed", description: e.message, variant: "destructive" });

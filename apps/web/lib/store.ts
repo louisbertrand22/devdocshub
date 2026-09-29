@@ -2,8 +2,9 @@
 
 import { create } from "zustand";
 import { DEFAULT_API_BASE, apiFetch } from "./api";
+import { safeGetItem, safeRemoveItem, safeSetItem } from "./safe-storage";
 
-type User = { id?: string; email?: string; username?: string; name?: string } | null;
+type User = { id?: string; email?: string; username?: string; name?: string; role?: string } | null;
 
 type AuthState = {
   token: string | null;
@@ -17,20 +18,13 @@ type AuthState = {
 };
 
 export const useAuth = create<AuthState>((set, get) => ({
-  token: typeof window !== "undefined" ? localStorage.getItem("ddh_token") : null,
+  token: safeGetItem("ddh_token"),
   user: null,
-  apiBase:
-    (typeof window !== "undefined" ? localStorage.getItem("ddh_api_base") : null) ??
-    DEFAULT_API_BASE,
+  apiBase: safeGetItem("ddh_api_base") ?? DEFAULT_API_BASE,
   loading: false,
   setToken: (t) => {
-    if (typeof window !== "undefined") {
-      if (t) {
-        localStorage.setItem("ddh_token", t);
-      } else {
-        localStorage.removeItem("ddh_token");
-      } 
-    }
+    if (t) safeSetItem("ddh_token", t);
+    else safeRemoveItem("ddh_token");
     set({ token: t });
     // Auto-load user when token is set
     if (t) {
@@ -46,7 +40,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   },
   setUser: (u) => set({ user: u }),
   setApiBase: (b) => {
-    if (typeof window !== "undefined") localStorage.setItem("ddh_api_base", b);
+    safeSetItem("ddh_api_base", b);
     set({ apiBase: b });
   },
   loadUser: async () => {
@@ -74,8 +68,6 @@ async function loadUserWithToken(
     console.error("Failed to load user:", error);
     // Token might be invalid, clear it
     set({ user: null, token: null, loading: false });
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("ddh_token");
-    }
+    safeRemoveItem("ddh_token");
   }
 }

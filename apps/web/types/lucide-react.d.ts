@@ -24,6 +24,10 @@ declare module "lucide-react" {
   export const Calendar: React.ComponentType<any>;
   export const Shield: React.ComponentType<any>;
 
+  export const Bell: React.ComponentType<any>;
+  export const Menu: React.ComponentType<any>;
+  export const X: React.ComponentType<any>;
+
   const _default: { [key: string]: React.ComponentType<any> };
   export default _default;
 }

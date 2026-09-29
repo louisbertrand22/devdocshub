@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import styles from "./select.module.css";
+import { cn } from "@/lib/utils";
 
 /* --- SVG inline (pas de lucide) --- */
 function IconCheck(props: React.SVGProps<SVGSVGElement>) {
@@ -27,13 +27,16 @@ export const SelectGroup = SelectPrimitive.Group;
 export const SelectValue = SelectPrimitive.Value;
 
 export function SelectTrigger({
-  className = "",
+  className,
   children,
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>) {
   return (
     <SelectPrimitive.Trigger
-      className={`${styles.trigger} ${className}`}
+      className={cn(
+        "flex h-9 w-full items-center justify-between rounded-md border border-border bg-bg px-3 text-sm text-fg transition-colors focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 disabled:cursor-not-allowed disabled:opacity-50 data-[placeholder]:text-fg-muted",
+        className,
+      )}
       {...props}
     >
       {children}
@@ -45,7 +48,7 @@ export function SelectTrigger({
 }
 
 export function SelectContent({
-  className = "",
+  className,
   children,
   position = "popper",
   ...props
@@ -55,11 +58,15 @@ export function SelectContent({
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
-        className={`${styles.content} ${className}`}
+        className={cn(
+          "z-50 max-h-80 min-w-[8rem] overflow-hidden rounded-lg border border-border bg-surface text-fg shadow-xl data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",
+          className,
+        )}
         position={position}
+        sideOffset={4}
         {...props}
       >
-        <SelectPrimitive.Viewport className={styles.viewport}>
+        <SelectPrimitive.Viewport className="w-full min-w-[var(--radix-select-trigger-width)] p-1">
           {children}
         </SelectPrimitive.Viewport>
       </SelectPrimitive.Content>
@@ -68,23 +75,26 @@ export function SelectContent({
 }
 
 export function SelectLabel({
-  className = "",
+  className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>) {
-  return <SelectPrimitive.Label className={`${styles.label} ${className}`} {...props} />;
+  return <SelectPrimitive.Label className={cn("px-2 py-1.5 font-mono text-[11px] text-fg-muted", className)} {...props} />;
 }
 
 export function SelectItem({
-  className = "",
+  className,
   children,
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>) {
   return (
     <SelectPrimitive.Item
-      className={`${styles.item} ${className}`}
+      className={cn(
+        "relative flex w-full cursor-pointer select-none items-center rounded-md py-1.5 pl-8 pr-2 text-sm outline-none data-[highlighted]:bg-surface-2 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        className,
+      )}
       {...props}
     >
-      <span className={styles.itemIndicator}>
+      <span className="absolute left-2 inline-flex size-4 items-center justify-center text-accent">
         <SelectPrimitive.ItemIndicator>
           <IconCheck />
         </SelectPrimitive.ItemIndicator>
@@ -95,22 +105,22 @@ export function SelectItem({
 }
 
 export function SelectSeparator({
-  className = "",
+  className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>) {
-  return <SelectPrimitive.Separator className={`${styles.separator} ${className}`} {...props} />;
+  return <SelectPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />;
 }
 
 export function SelectScrollUpButton({
-  className = "",
+  className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>) {
-  return <SelectPrimitive.ScrollUpButton className={`${styles.scrollButton} ${className}`} {...props} />;
+  return <SelectPrimitive.ScrollUpButton className={cn("flex h-6 cursor-default items-center justify-center text-fg-muted", className)} {...props} />;
 }
 
 export function SelectScrollDownButton({
-  className = "",
+  className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>) {
-  return <SelectPrimitive.ScrollDownButton className={`${styles.scrollButton} ${className}`} {...props} />;
+  return <SelectPrimitive.ScrollDownButton className={cn("flex h-6 cursor-default items-center justify-center text-fg-muted", className)} {...props} />;
 }
