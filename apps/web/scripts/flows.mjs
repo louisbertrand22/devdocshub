@@ -9,6 +9,7 @@ const stamp = Date.now().toString(36);
 const email = `flow-${stamp}@test.dev`;
 const password = "Flow12345!";
 const docTitle = `Flow doc ${stamp}`;
+const noteText = `Note de test flow ${stamp}`;
 const results = [];
 const check = (name, ok, extra = "") => results.push({ name, ok, extra });
 
@@ -72,11 +73,14 @@ await section("auth", async () => {
 
 await section("docs", async () => {
   await p.goto(`${BASE}/docs/new`, { waitUntil: "networkidle" });
-  await p.fill('input[placeholder="My guide"]', docTitle);
-  await p.fill('input[placeholder="my-guide"]', `flow-doc-${stamp}`);
-  await p.fill('input[placeholder="python, javascript, etc."]', "FlowTech");
-  await p.fill('textarea[placeholder="# Intro..."]', "## Installation\nflow\n\n### Détails `avancés`\n\n```bash\necho flow\n```\n\n## Installation\nbis\n\n| Clé | Valeur |\n|---|---|\n| a | b |");
-  await p.getByRole("button", { name: "Create" }).click();
+  await p.getByRole("button", { name: "Créer le doc" }).click();
+  check("formulaire doc : erreurs inline si vide", (await p.getByText("Le titre est requis.").count()) === 1);
+  await p.fill("#doc-title", docTitle);
+  const autoSlug = await p.inputValue("#doc-slug");
+  check("formulaire doc : slug proposé depuis le titre", autoSlug === `flow-doc-${stamp}`, autoSlug);
+  await p.fill("#doc-tech", "FlowTech");
+  await p.fill("#doc-content", "## Installation\nflow\n\n### Détails `avancés`\n\n```bash\necho flow\n```\n\n## Installation\nbis\n\n| Clé | Valeur |\n|---|---|\n| a | b |");
+  await p.getByRole("button", { name: "Créer le doc" }).click();
   await p.waitForURL("**/docs", { timeout: 10000 });
   const sidebar = p.locator('aside nav[aria-label="Docs"]');
   await sidebar.getByText(docTitle).waitFor({ timeout: 10000 });
@@ -102,19 +106,20 @@ await section("docs", async () => {
 });
 
 await section("notes", async () => {
-  await p.goto(`${BASE}/notes/new`, { waitUntil: "networkidle" });
-  await p.click("#doc_id");
-  await p.getByRole("option", { name: new RegExp(docTitle) }).click();
-  await p.locator("form textarea").first().fill("Note de test flow");
-  await p.locator('form button[type="submit"]').click();
+  await p.goto(`${BASE}/notes/new?doc=${docId}`, { waitUntil: "networkidle" });
+  const preselected = await p.locator("#doc_id").innerText();
+  check("nouvelle note : doc présélectionné via ?doc=", preselected.includes(docTitle), preselected);
+  await p.fill("#note-content", noteText);
+  await p.getByLabel("Épingler cette note").click();
+  await p.getByRole("button", { name: "Créer la note" }).click();
   await p.waitForURL("**/notes", { timeout: 10000 });
   check("note créée → /notes", true);
 });
 
 await section("collections", async () => {
   await p.goto(`${BASE}/collections/add`, { waitUntil: "networkidle" });
-  await p.fill('input[placeholder="Knowledge Base"]', `Flow col ${stamp}`);
-  await p.getByRole("button", { name: "Create collection" }).click();
+  await p.fill("#col-name", `Flow col ${stamp}`);
+  await p.getByRole("button", { name: "Créer la collection" }).click();
   await p.waitForURL("**/collections", { timeout: 10000 });
   check("collection créée → /collections", true);
 });
@@ -132,9 +137,9 @@ await section("listes", async () => {
   await p.goto(`${BASE}/notes?pinned=1`, { waitUntil: "networkidle" });
   const pinnedSidebar = await p.locator('aside nav[aria-label="Notes"] a[aria-current="page"]').innerText();
   const pinnedBox = await p.getByRole("checkbox", { name: "Épinglées seulement" }).getAttribute("data-state");
-  check("/notes?pinned=1 : sidebar et case synchronisées", pinnedSidebar.includes("Épinglées") && pinnedBox === "checked", `${pinnedSidebar} / ${pinnedBox}`);
+  check("/notes?pinned=1 : sidebar et case synchronisées", pinnedSidebar.includes("Épinglées") && pinnedBox === "checked" && (await p.locator("main li", { hasText: noteText }).count()) === 1, `${pinnedSidebar} / ${pinnedBox}`);
   await p.goto(`${BASE}/notes?doc=${docId}`, { waitUntil: "networkidle" });
-  const noteRows = p.locator("main li", { hasText: "Note de test flow" });
+  const noteRows = p.locator("main li", { hasText: noteText });
   check("/notes?doc= : notes du doc, avec son titre", (await noteRows.count()) === 1 && (await noteRows.getByText(docTitle).count()) === 1);
 
   await p.goto(`${BASE}/collections`, { waitUntil: "networkidle" });

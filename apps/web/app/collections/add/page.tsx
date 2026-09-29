@@ -1,28 +1,15 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import CollectionForm from "@/components/forms/collection-form"
+import { useRouter } from "next/navigation";
+import CollectionForm from "@/components/forms/collection-form";
+import { PageHeader } from "@/components/page/page-header";
 
 export default function AddCollectionPage() {
-  const router = useRouter()
-
-  const handleCreated = () => {
-    // Navigate back to collections list after successful creation
-    router.push("/collections")
-  }
-
+  const router = useRouter();
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Add New Collection</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Create a new collection to organize your documents
-        </p>
-      </div>
-      
-      <div className="max-w-2xl">
-        <CollectionForm onCreated={handleCreated} />
-      </div>
+    <div className="mx-auto flex max-w-2xl flex-col gap-6">
+      <PageHeader eyebrow="collections / nouvelle" title="Nouvelle collection" description="Crée une collection, puis ajoutes-y des docs." />
+      <CollectionForm onCreated={() => router.push("/collections")} />
     </div>
-  )
+  );
 }
