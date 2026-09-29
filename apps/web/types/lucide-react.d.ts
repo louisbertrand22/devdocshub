@@ -28,6 +28,12 @@ declare module "lucide-react" {
   export const Menu: React.ComponentType<any>;
   export const X: React.ComponentType<any>;
 
+  export const Copy: React.ComponentType<any>;
+  export const Check: React.ComponentType<any>;
+  export const Star: React.ComponentType<any>;
+  export const Inbox: React.ComponentType<any>;
+  export const ArrowLeft: React.ComponentType<any>;
+
   const _default: { [key: string]: React.ComponentType<any> };
   export default _default;
 }

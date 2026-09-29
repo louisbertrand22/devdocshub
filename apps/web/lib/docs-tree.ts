@@ -3,6 +3,7 @@ export type DocSummary = {
   title: string;
   tech: string;
   slug?: string;
+  content?: string;
   created_at?: string;
 };
 

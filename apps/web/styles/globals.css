@@ -106,15 +106,25 @@
   }
 }
 
-/* Contenu markdown (en attendant la refonte de la page doc en phase 2) */
+/* Contenu markdown (page doc) — les blocs de code sont rendus par <CodeBlock> */
 @layer components {
-  .prose { @apply max-w-none; }
-  .prose h1, .prose h2, .prose h3 { @apply mb-3 mt-8; }
-  .prose p { @apply my-4 text-fg; }
-  .prose a { @apply text-accent underline decoration-accent-border underline-offset-2; }
+  .prose { @apply max-w-none text-[15px] leading-7 text-fg; }
+  .prose > :first-child { @apply mt-0; }
+  .prose h1 { @apply mb-4 mt-10; }
+  .prose h2 { @apply mb-3 mt-12 scroll-mt-20 border-b border-border pb-2; }
+  .prose h3 { @apply mb-2 mt-8 scroll-mt-20 text-[17px]; }
+  .prose p { @apply my-4; }
+  .prose a { @apply text-accent underline decoration-accent-border underline-offset-2 hover:decoration-accent; }
+  .prose strong { @apply font-semibold text-fg; }
   .prose ul { @apply my-4 list-disc pl-6; }
   .prose ol { @apply my-4 list-decimal pl-6; }
-  .prose :not(pre) > code { @apply rounded border border-border bg-surface-2 px-1 py-0.5 text-[0.9em]; }
-  .prose pre { @apply my-4 overflow-x-auto rounded-lg border border-border bg-surface p-4 text-[13px]; }
-  .prose blockquote { @apply border-l-2 border-accent pl-4 text-fg-muted; }
+  .prose li { @apply my-1; }
+  .prose li::marker { @apply text-fg-muted; }
+  .prose :not(pre) > code { @apply rounded border border-border bg-surface-2 px-1 py-0.5 text-[0.88em]; }
+  .prose blockquote { @apply my-5 border-l-2 border-accent pl-4 text-fg-muted; }
+  .prose hr { @apply my-10 border-border; }
+  .prose table { @apply my-5 w-full border-collapse text-sm; }
+  .prose th { @apply border-b border-border px-3 py-2 text-left font-medium; }
+  .prose td { @apply border-b border-border px-3 py-2; }
+  .prose img { @apply my-5 rounded-lg border border-border; }
 }
