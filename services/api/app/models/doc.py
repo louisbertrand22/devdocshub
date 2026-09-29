@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from fastapi import HTTPException
 from datetime import datetime
 from app.db.base import Base
-from app.db.session import get_session
+from app.db.session import SessionLocal
 from sqlalchemy.dialects.postgresql import UUID as SAUUID
 import uuid
 
@@ -23,35 +23,35 @@ class Doc(Base):
 
 def get_all_docs(q: Optional[str] = None, tech: Optional[str] = None, page: int = 1, size: Optional[int] = 20):
     """Docs les plus récents d'abord ; size=None renvoie tout (sans pagination)."""
-    session = next(get_session())
-    query = session.query(Doc).order_by(Doc.created_at.desc())
-    if q:
-        query = query.filter((Doc.title.ilike(f"%{q}%")) | (Doc.content.ilike(f"%{q}%")))
-    if tech:
-        query = query.filter(Doc.tech == tech)
-    if size is None:
-        return query.all()
-    return query.offset((page - 1) * size).limit(size).all()
+    with SessionLocal() as session:
+        query = session.query(Doc).order_by(Doc.created_at.desc())
+        if q:
+            query = query.filter((Doc.title.ilike(f"%{q}%")) | (Doc.content.ilike(f"%{q}%")))
+        if tech:
+            query = query.filter(Doc.tech == tech)
+        if size is None:
+            return query.all()
+        return query.offset((page - 1) * size).limit(size).all()
 
 def get_doc_by_id(doc_id: SAUUID):
-    session = next(get_session())
-    return session.query(Doc).filter(Doc.id == doc_id).first()
+    with SessionLocal() as session:
+        return session.query(Doc).filter(Doc.id == doc_id).first()
 
 def add_doc(slug: str, title: str, tech: str, content: str):
-    session = next(get_session())
-    exists = session.query(Doc).filter(Doc.slug == slug).first()
-    if exists:
-        raise HTTPException(status_code=400, detail="Slug déjà utilisé")
-    new_doc = Doc(slug=slug, title=title, tech=tech, content=content)
-    session.add(new_doc)
-    session.commit()
-    session.refresh(new_doc)
-    return new_doc
+    with SessionLocal() as session:
+        exists = session.query(Doc).filter(Doc.slug == slug).first()
+        if exists:
+            raise HTTPException(status_code=400, detail="Slug déjà utilisé")
+        new_doc = Doc(slug=slug, title=title, tech=tech, content=content)
+        session.add(new_doc)
+        session.commit()
+        session.refresh(new_doc)
+        return new_doc
 
 def get_doc_by_slug(slug: str):
-    session = next(get_session())
-    return session.query(Doc).filter(Doc.slug == slug).first()
+    with SessionLocal() as session:
+        return session.query(Doc).filter(Doc.slug == slug).first()
 
 def get_count_docs() -> List[Doc]:
-    session = next(get_session())
-    return session.query(Doc).all()
+    with SessionLocal() as session:
+        return session.query(Doc).all()
