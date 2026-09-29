@@ -10,6 +10,9 @@ COPY . .
 
 ARG NEXT_PUBLIC_API_BASE=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE=${NEXT_PUBLIC_API_BASE}
+# URL publique du site (aperçus de liens de la landing) ; vide = pas d'image Open Graph
+ARG NEXT_PUBLIC_SITE_URL=
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 
 # 1) Install racine si lockfile présent (sinon install standard)
 RUN if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; else pnpm install; fi

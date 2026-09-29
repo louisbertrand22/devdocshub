@@ -52,6 +52,16 @@ await section("landing", async () => {
   check("landing : ancres #features et #how", (await p.locator("#features").count()) === 1 && (await p.locator("#how").count()) === 1);
   const heroLoaded = await p.evaluate(() => [...document.querySelectorAll("img[data-hero]")].some((img) => img.naturalWidth > 0 && img.offsetParent !== null));
   check("landing : image du hero chargée dans le thème courant", heroLoaded);
+  const overflows = [];
+  for (const width of [320, 360, 390]) {
+    await p.setViewportSize({ width, height: 800 });
+    const extra = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    if (extra > 0) overflows.push(`${width}px:+${extra}`);
+  }
+  await p.setViewportSize({ width: 1440, height: 900 });
+  check("landing : aucun débordement horizontal de 320 à 390px", overflows.length === 0, overflows.join(" "));
+  const og = await p.evaluate(() => document.querySelector('meta[property="og:image"]')?.getAttribute("content") ?? null);
+  check("landing : og:image absente ou absolue hors localhost", og === null || (/^https?:\/\//.test(og) && !/localhost/.test(og)), String(og));
   await p.getByRole("link", { name: "Créer un compte gratuit" }).first().click();
   await p.waitForURL("**/auth?mode=register", { timeout: 10000 });
   const tab = await p.locator('[role="tab"][data-state="active"]').innerText();

@@ -36,7 +36,7 @@ pick 9a0b1c2 Corrige le test du profil
 | `reword` | Garde le contenu, modifie le message |
 | `edit` | S'arrête sur le commit pour le modifier |
 | `squash` | Fusionne avec le commit précédent, combine les messages |
-| `fixup` | Fusionne avec le commit précédent, garde son message |
+| `fixup` | Fusionne avec le commit précédent en gardant le message de celui-ci |
 | `drop` | Supprime le commit |
 
 Changer l'ordre des lignes réordonne les commits.

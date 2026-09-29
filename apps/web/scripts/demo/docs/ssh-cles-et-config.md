@@ -95,6 +95,8 @@ PermitRootLogin no
 sudo sshd -t && sudo systemctl reload ssh
 ```
 
+Sur Debian et Ubuntu le service s'appelle `ssh` ; sur Fedora, RHEL ou Arch, c'est `sshd`.
+
 Garde une session ouverte pendant ce changement pour ne pas t'enfermer dehors.
 
 ## Dépannage

@@ -15,7 +15,7 @@ export function Hero() {
             Ta documentation technique, <span className="text-accent">enfin au même endroit.</span>
           </h1>
           <p className="mt-5 text-[17px] leading-relaxed text-fg-muted">
-            Rédige tes docs en markdown, annote-les, range-les par techno et retrouve n'importe quoi en une touche.
+            Rédige tes docs en markdown, annote-les, range-les par techno et retrouve n'importe quel doc en une touche.
           </p>
           <CtaButtons className="mt-8" />
           <p className="mt-3 font-mono text-[11px] text-fg-muted">gratuit · sans carte bancaire</p>

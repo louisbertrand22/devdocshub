@@ -69,7 +69,7 @@ journalctl -u monapp -p err             # uniquement les erreurs
 `EnvironmentFile` charge un fichier `CLÉ=valeur` ; protège-le s'il contient des secrets :
 
 ```bash
-sudo install -m 600 -o root -g root /dev/null /etc/monapp/env
+sudo install -D -m 600 -o root -g root /dev/null /etc/monapp/env
 ```
 
 ## Durcir le service
