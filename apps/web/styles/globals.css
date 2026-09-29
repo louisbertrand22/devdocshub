@@ -127,4 +127,12 @@
   .prose th { @apply border-b border-border px-3 py-2 text-left font-medium; }
   .prose td { @apply border-b border-border px-3 py-2; }
   .prose img { @apply my-5 rounded-lg border border-border; }
+
+  /* Encadrés et métadonnées dans les pages de contenu */
+  .prose .card { @apply my-4 rounded-lg border border-border bg-surface p-5; }
+  .prose .card > :first-child { @apply mt-0; }
+  .prose .card > :last-child { @apply mb-0; }
+  .prose .card h3 { @apply mb-1 mt-0 text-base; }
+  .prose .meta { @apply my-1 font-mono text-xs text-fg-muted; }
+  .prose .no-underline { text-decoration: none; }
 }

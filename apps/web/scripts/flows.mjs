@@ -158,6 +158,30 @@ await section("tableau de bord", async () => {
   check("/users non admin → réservé aux administrateurs", (await p.getByText("Réservé aux administrateurs").count()) === 1);
 });
 
+await section("pages statiques", async () => {
+  const pages = ["/about", "/blog", "/careers", "/contact", "/cookies", "/licenses", "/privacy", "/terms"];
+  const legacy = /\b(?:slate|blue|purple|green|indigo|violet)-\d|bg-white|muted-foreground|text-primary|bg-muted\b|prose-slate|prose-invert/;
+  for (const path of pages) {
+    await p.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+    const r = await p.evaluate((re) => {
+      const legacyRe = new RegExp(re);
+      const main = document.querySelector("main");
+      const links = [...(main?.querySelectorAll("a") ?? [])];
+      return {
+        h1: document.querySelectorAll("main h1").length,
+        prose: document.querySelectorAll("main article.prose").length,
+        legacy: [...(main?.querySelectorAll("*") ?? [])].filter((el) => legacyRe.test(el.getAttribute("class") ?? "")).length,
+        dead: links.filter((a) => a.getAttribute("href") === "#").length,
+        unsafeExternal: links.filter((a) => /^https?:/.test(a.getAttribute("href") ?? "") && !(a.target === "_blank" && /noopener/.test(a.rel))).length,
+      };
+    }, legacy.source);
+    check(`${path} : gabarit ProsePage, sans classes héritées ni liens morts`, r.h1 === 1 && r.prose === 1 && r.legacy === 0 && r.dead === 0 && r.unsafeExternal === 0, JSON.stringify(r));
+  }
+  await p.goto(`${BASE}/licenses`, { waitUntil: "networkidle" });
+  const licenses = await p.locator("main article").innerText();
+  check("/licenses : liste à jour", !licenses.includes("Framer Motion") && ["Next.js", "React", "Tailwind CSS", "Radix UI", "react-markdown", "remark-gfm", "Geist"].every((n) => licenses.includes(n)));
+});
+
 await section("clavier", async () => {
   await p.goto(`${BASE}/dashboard`, { waitUntil: "networkidle" });
   const order = [];
