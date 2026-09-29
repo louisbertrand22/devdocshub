@@ -153,6 +153,36 @@ export default function LicensesPage() {
             
             <div>
               <div className="card">
+                <h3>class-variance-authority</h3>
+                <p className="meta">
+                  Variantes de classes pour les composants - Apache License 2.0
+                </p>
+                <a 
+                  href="https://github.com/joe-bell/cva" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm"
+                >
+                  https://github.com/joe-bell/cva
+                </a>
+              </div>
+
+              <div className="card">
+                <h3>tailwind-merge</h3>
+                <p className="meta">
+                  Fusion de classes Tailwind sans conflit - MIT License
+                </p>
+                <a 
+                  href="https://github.com/dcastil/tailwind-merge" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm"
+                >
+                  https://github.com/dcastil/tailwind-merge
+                </a>
+              </div>
+
+              <div className="card">
                 <h3>Zustand</h3>
                 <p className="meta">
                   Gestion d'état simple et évolutive - MIT License

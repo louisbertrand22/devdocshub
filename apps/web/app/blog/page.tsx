@@ -16,11 +16,11 @@ export default function BlogPage() {
             </p>
           </div>
 
-          <div className="border-b border-border pb-8">
-            <div className="meta">15 janvier 2025</div>
+          <div>
             <h2>
               10 astuces pour organiser efficacement votre documentation
             </h2>
+            <div className="meta">15 janvier 2025</div>
             <p>
               Découvrez nos meilleures pratiques pour structurer vos documents et gagner en productivité. 
               De l'utilisation des collections aux systèmes de tags, apprenez à créer une organisation 
@@ -29,11 +29,11 @@ export default function BlogPage() {
             <span className="meta">Bientôt disponible</span>
           </div>
 
-          <div className="border-b border-border pb-8">
-            <div className="meta">8 janvier 2025</div>
+          <div>
             <h2>
               Nouveautés : Collaboration en temps réel
             </h2>
+            <div className="meta">8 janvier 2025</div>
             <p>
               Nous sommes ravis d'annoncer le lancement de notre nouvelle fonctionnalité de collaboration 
               en temps réel. Travaillez avec votre équipe sur vos documents simultanément et voyez les 
@@ -42,11 +42,11 @@ export default function BlogPage() {
             <span className="meta">Bientôt disponible</span>
           </div>
 
-          <div className="border-b border-border pb-8">
-            <div className="meta">22 décembre 2024</div>
+          <div>
             <h2>
               Guide complet : Recherche avancée dans DevDocsHub
             </h2>
+            <div className="meta">22 décembre 2024</div>
             <p>
               Maîtrisez les opérateurs de recherche avancée pour retrouver instantanément n'importe quel 
               document. Ce guide détaillé vous montre comment utiliser les filtres, les expressions régulières 
@@ -55,11 +55,11 @@ export default function BlogPage() {
             <span className="meta">Bientôt disponible</span>
           </div>
 
-          <div className="border-b border-border pb-8">
-            <div className="meta">10 décembre 2024</div>
+          <div>
             <h2>
               Intégrations : Connectez vos outils favoris
             </h2>
+            <div className="meta">10 décembre 2024</div>
             <p>
               DevDocsHub s'intègre désormais avec vos outils de développement préférés : GitHub, GitLab, 
               Notion, Confluence et bien d'autres. Synchronisez automatiquement votre documentation 
@@ -68,11 +68,11 @@ export default function BlogPage() {
             <span className="meta">Bientôt disponible</span>
           </div>
 
-          <div className="pb-8">
-            <div className="meta">1 décembre 2024</div>
+          <div>
             <h2>
               Bienvenue sur DevDocsHub !
             </h2>
+            <div className="meta">1 décembre 2024</div>
             <p>
               Nous sommes heureux de vous accueillir sur notre plateforme de gestion documentaire. 
               Découvrez comment DevDocsHub peut transformer votre façon de gérer et d'accéder à 

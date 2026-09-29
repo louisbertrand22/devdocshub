@@ -98,7 +98,10 @@
 /* Contenu markdown (page doc) — les blocs de code sont rendus par <CodeBlock> */
 @layer components {
   .prose { @apply max-w-none text-[15px] leading-7 text-fg; }
-  .prose > :first-child { @apply mt-0; }
+  /* Premier élément collé à l'en-tête, même imbriqué (section > div > h2) */
+  .prose > :first-child,
+  .prose > :first-child > :first-child,
+  .prose > :first-child > :first-child > :first-child { @apply mt-0; }
   .prose h1 { @apply mb-4 mt-10; }
   .prose h2 { @apply mb-3 mt-12 scroll-mt-20 border-b border-border pb-2; }
   .prose h3 { @apply mb-2 mt-8 scroll-mt-20 text-[17px]; }

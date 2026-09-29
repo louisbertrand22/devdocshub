@@ -177,9 +177,28 @@ await section("pages statiques", async () => {
     }, legacy.source);
     check(`${path} : gabarit ProsePage, sans classes héritées ni liens morts`, r.h1 === 1 && r.prose === 1 && r.legacy === 0 && r.dead === 0 && r.unsafeExternal === 0, JSON.stringify(r));
   }
+  for (const path of pages) {
+    await p.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+    const gap = await p.evaluate(() => {
+      const article = document.querySelector("main article.prose");
+      const first = article?.querySelector("h2, h3, p, ul, ol, div.card");
+      return article && first ? Math.round(first.getBoundingClientRect().top - article.getBoundingClientRect().top) : -1;
+    });
+    check(`${path} : pas d'espace vide sous l'en-tête`, gap >= 0 && gap <= 8, `${gap}px`);
+  }
+  await p.goto(`${BASE}/blog`, { waitUntil: "networkidle" });
+  const blog = await p.evaluate(() => {
+    const metas = [...document.querySelectorAll("main article .meta")].filter((m) => /\d{4}/.test(m.textContent ?? ""));
+    return {
+      dates: metas.length,
+      dateUnderTitle: metas.filter((m) => m.previousElementSibling?.tagName === "H2").length,
+      doubleRules: document.querySelectorAll("main article .border-b").length,
+    };
+  });
+  check("/blog : chaque date sous le titre de son article, sans double filet", blog.dates > 0 && blog.dates === blog.dateUnderTitle && blog.doubleRules === 0, JSON.stringify(blog));
   await p.goto(`${BASE}/licenses`, { waitUntil: "networkidle" });
   const licenses = await p.locator("main article").innerText();
-  check("/licenses : liste à jour", !licenses.includes("Framer Motion") && ["Next.js", "React", "Tailwind CSS", "Radix UI", "react-markdown", "remark-gfm", "Geist"].every((n) => licenses.includes(n)));
+  check("/licenses : liste à jour", !licenses.includes("Framer Motion") && ["Next.js", "React", "Tailwind CSS", "Radix UI", "react-markdown", "remark-gfm", "Geist", "class-variance-authority", "tailwind-merge"].every((n) => licenses.includes(n)));
 });
 
 await section("clavier", async () => {
