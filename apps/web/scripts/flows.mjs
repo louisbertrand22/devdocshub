@@ -194,8 +194,18 @@ await section("collections", async () => {
   await p.goto(`${BASE}/collections/add`, { waitUntil: "networkidle" });
   await p.fill("#col-name", `Flow col ${stamp}`);
   await p.getByRole("button", { name: "Créer la collection" }).click();
-  await p.waitForURL("**/collections", { timeout: 10000 });
-  check("collection créée → /collections", true);
+  await p.waitForURL(/\/collections\/[0-9a-f-]{36}$/, { timeout: 10000 });
+  await p.getByRole("heading", { level: 1, name: `Flow col ${stamp}` }).waitFor({ timeout: 10000 });
+  check("collection créée → sa page", (await p.getByText("Collection vide").count()) === 1);
+  await p.locator("#add-doc").click();
+  await p.getByRole("option", { name: new RegExp(docTitle) }).click();
+  await p.getByRole("button", { name: "Ajouter", exact: true }).click();
+  const docLink = p.locator("main ul li a", { hasText: docTitle });
+  await docLink.waitFor({ timeout: 10000 });
+  check("collection : doc ajouté et listé", (await docLink.getAttribute("href")) === `/docs/${docId}`);
+  await p.getByRole("button", { name: `Retirer « ${docTitle} » de la collection` }).click();
+  await p.getByText("Collection vide").waitFor({ timeout: 10000 });
+  check("collection : doc retiré", true);
 });
 
 await section("listes", async () => {
@@ -217,7 +227,8 @@ await section("listes", async () => {
   check("/notes?doc= : notes du doc, avec son titre", (await noteRows.count()) === 1 && (await noteRows.getByText(docTitle).count()) === 1);
 
   await p.goto(`${BASE}/collections`, { waitUntil: "networkidle" });
-  check("/collections : ligne de la collection", (await p.locator("main li", { hasText: `Flow col ${stamp}` }).count()) === 1);
+  const colRow = p.locator("main li a", { hasText: `Flow col ${stamp}` });
+  check("/collections : ligne cliquable vers la collection", (await colRow.count()) === 1 && /^\/collections\/[0-9a-f-]{36}$/.test((await colRow.getAttribute("href")) ?? ""));
 });
 
 await section("tableau de bord", async () => {

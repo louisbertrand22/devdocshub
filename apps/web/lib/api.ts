@@ -31,6 +31,8 @@ export async function apiFetch<T = any>(
     const text = await res.text();
     throw new ApiError(res.status, `${res.status} ${res.statusText} — ${text || "Request failed"}`);
   }
+  // 204 : pas de corps, même si l'API annonce du JSON (FastAPI le fait)
+  if (res.status === 204) return undefined as T;
   const ct = res.headers.get("content-type") || "";
   if (ct.includes("application/json")) return res.json();
   // @ts-expect-error: caller knows response type

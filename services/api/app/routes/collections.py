@@ -18,7 +18,6 @@ from app.schemas.collection import (
 )
 from app.models.collection import (
     Collection,
-    get_count_collections,
     list_collections,
     get_collection,
     create_collection,
@@ -36,13 +35,9 @@ router = APIRouter(
     response_model=int,
     dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
 )
-def count_collections():
-    """
-    Renvoie un entier (200: number) pour coller à ce qu'attend le frontend.
-    """
-    # get_count_collections() doit renvoyer un int.
-    # Si chez toi ça renvoie une liste, remplace par: return len(get_count_collections())
-    return len(get_count_collections())
+def count_collections(current_user: dict = Depends(get_current_user)):
+    """Nombre de collections de l'utilisateur connecté (les collections sont privées)."""
+    return len(list(list_collections(owner_id=current_user["id"], size=None)))
 
 @router.get(
     "/count/mine",
@@ -53,8 +48,7 @@ def count_my_collections(current_user: dict = Depends(get_current_user)):
     """
     Renvoie le nombre de collections de l'utilisateur connecté.
     """
-    rows = list_collections(owner_id=current_user["id"])
-    return len(list(rows))
+    return len(list(list_collections(owner_id=current_user["id"], size=None)))
 
 # --- Listing / création ---
 
@@ -67,11 +61,10 @@ def get_all_collections(
     q: Optional[str] = Query(None, description="Recherche plein texte"),
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
-    only_mine: bool = Query(False, description="Ne lister que mes collections"),
+    only_mine: bool = Query(True, description="Ignoré : on ne liste que ses propres collections"),
     current_user: dict = Depends(get_current_user),
 ):
-    owner_id = current_user["id"] if only_mine else None
-    rows = list_collections(owner_id=owner_id, q=q, page=page, size=size)
+    rows = list_collections(owner_id=current_user["id"], q=q, page=page, size=size)
     return rows
 
 
@@ -90,11 +83,14 @@ def create_new_collection(
 
 # --- Helpers ---
 
-def _ensure_owner_or_admin(collection: Collection, current_user: dict):
-    role = current_user.get("role", "user")
-    is_admin = role == "admin"
-    if collection.owner_id != current_user["id"] and not is_admin:
-        raise HTTPException(status_code=403, detail="Not allowed")
+def _own_collection(collection_id: UUID, current_user: dict) -> Collection:
+    """La collection si elle appartient à l'utilisateur (ou s'il est admin), sinon 404 :
+    on ne confirme pas l'existence des collections des autres."""
+    collection = get_collection(collection_id)
+    is_admin = current_user.get("role", "user") == "admin"
+    if not collection or (collection.owner_id != current_user["id"] and not is_admin):
+        raise HTTPException(status_code=404, detail="Collection introuvable")
+    return collection
 
 # --- CRUD par id ---
 
@@ -103,11 +99,8 @@ def _ensure_owner_or_admin(collection: Collection, current_user: dict):
     response_model=CollectionOut,
     dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
 )
-def get_collection_by_id(collection_id: UUID):
-    db_collection = get_collection(collection_id)
-    if not db_collection:
-        raise HTTPException(status_code=404, detail="Collection not found")
-    return db_collection
+def get_collection_by_id(collection_id: UUID, current_user: dict = Depends(get_current_user)):
+    return _own_collection(collection_id, current_user)
 
 
 @router.put(
@@ -120,10 +113,7 @@ def update_collection_by_id(
     collection: CollectionUpdate,
     current_user: dict = Depends(get_current_user),
 ):
-    db_collection = get_collection(collection_id)
-    if not db_collection:
-        raise HTTPException(status_code=404, detail="Collection not found")
-    _ensure_owner_or_admin(db_collection, current_user)
+    _own_collection(collection_id, current_user)
     updated_collection = update_collection(collection_id, collection)
     return updated_collection
 
@@ -137,10 +127,7 @@ def delete_collection_by_id(
     collection_id: UUID,
     current_user: dict = Depends(get_current_user),
 ):
-    db_collection = get_collection(collection_id)
-    if not db_collection:
-        raise HTTPException(status_code=404, detail="Collection not found")
-    _ensure_owner_or_admin(db_collection, current_user)
+    _own_collection(collection_id, current_user)
     success = delete_collection(collection_id)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to delete collection")
@@ -159,10 +146,7 @@ def link_doc(
     payload: CollectionDocLink,
     current_user: dict = Depends(get_current_user),
 ):
-    col = get_collection(collection_id)
-    if not col:
-        raise HTTPException(status_code=404, detail="Collection introuvable")
-    _ensure_owner_or_admin(col, current_user)
+    _own_collection(collection_id, current_user)
 
     col = add_doc_to_collection(collection_id, payload.doc_id)
     if not col:
@@ -180,10 +164,7 @@ def unlink_doc(
     doc_id: UUID,
     current_user: dict = Depends(get_current_user),
 ):
-    col = get_collection(collection_id)
-    if not col:
-        raise HTTPException(status_code=404, detail="Collection introuvable")
-    _ensure_owner_or_admin(col, current_user)
+    _own_collection(collection_id, current_user)
 
     remove_doc_from_collection(collection_id, doc_id)
     return
@@ -194,7 +175,8 @@ def unlink_doc(
     response_model=List[DocMini],
     dependencies=[Depends(require_roles("user", "maintainer", "admin"))],
 )
-def list_collection_docs(collection_id: UUID):
+def list_collection_docs(collection_id: UUID, current_user: dict = Depends(get_current_user)):
+    _own_collection(collection_id, current_user)
     docs = list_docs_in_collection(collection_id)
     if docs is None:
         raise HTTPException(status_code=404, detail="Collection introuvable")

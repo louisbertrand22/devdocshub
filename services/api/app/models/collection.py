@@ -28,7 +28,7 @@ class Collection(Base):
 
 
 def list_collections(owner_id: Optional[UUID] = None, q: Optional[str] = None,
-                     page: int = 1, size: int = 20) -> Iterable[Collection]:
+                     page: int = 1, size: Optional[int] = 20) -> Iterable[Collection]:
     with SessionLocal() as db:
         # Plus récentes d'abord : la première page contient les dernières créées
         res = db.query(Collection).order_by(Collection.created_at.desc())
@@ -36,6 +36,8 @@ def list_collections(owner_id: Optional[UUID] = None, q: Optional[str] = None,
             res = res.filter(Collection.owner_id == owner_id)
         if q:
             res = res.filter(Collection.name.ilike(f"%{q}%"))
+        if size is None:
+            return res.all()
         return res.offset((page - 1) * size).limit(size).all()
 
 def get_collection(collection_id: UUID):

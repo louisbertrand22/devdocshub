@@ -74,6 +74,7 @@ export default function CollectionsPage() {
           {state.collections.map((c) => (
             <Row
               key={c.id}
+              href={`/collections/${c.id}`}
               title={c.name}
               description={excerpt(c.description, 160) || undefined}
               meta={<span>créée {formatRelative(c.created_at)}</span>}
