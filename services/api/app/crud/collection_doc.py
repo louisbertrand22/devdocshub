@@ -19,6 +19,9 @@ def add_doc_to_collection(collection_id: UUID, doc_id: UUID):
             col.docs.append(doc)
             db.commit()
             db.refresh(col)  # encore attaché grâce à expire_on_commit=False
+            # refresh() décharge la relation : on la recharge avant la fermeture de la
+            # session, sinon la sérialisation de la réponse lève DetachedInstanceError (500)
+            _ = col.docs
 
         return col
 
