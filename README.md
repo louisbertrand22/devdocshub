@@ -102,6 +102,27 @@ docker-compose logs -f
 docker-compose down
 ```
 
+#### 5. Using Supabase as the database
+
+The API only needs a PostgreSQL URL, so a Supabase project works as the database (Supabase Auth and Storage are not used; the API has its own auth).
+
+1. In Supabase, open **Connect** and copy a pooler connection string.
+2. Set `DATABASE_URL` for the API, with the `postgresql+psycopg://` prefix and `sslmode=require`:
+
+   ```bash
+   # Transaction pooler (port 6543): recommended for serverless or many API instances
+   DATABASE_URL=postgresql+psycopg://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres?sslmode=require
+   # Session pooler (port 5432): also fine for a single long-running API
+   DATABASE_URL=postgresql+psycopg://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+   ```
+
+   On port 6543 the API automatically disables server-side prepared statements and its own connection pool, which transaction pooling does not support. For another transaction pooler on a different port, set `DATABASE_POOL_MODE=transaction`.
+3. Start the API: on boot it creates the tables and enables Row Level Security on each of them, with no policy. Supabase's REST API (`anon` / `authenticated` roles) therefore sees no rows, while the API, which owns the tables, is unaffected. Connect with the `postgres` user so the API owns what it creates.
+
+Checks (run inside the API container): `scripts/check_pooler.py` (instructions in the file, with a local PgBouncer) and `scripts/check_rls.py`.
+
+The schema is created with `create_all`, which adds missing tables but never alters existing ones; there are no migrations yet.
+
 ---
 
 ## 📂 Project Structure
