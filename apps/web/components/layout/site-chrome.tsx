@@ -26,6 +26,9 @@ export function SiteChrome({ children, year }: { children: React.ReactNode; year
     applyStoredTheme();
   }, []);
 
+  // Landing publique : rendue côté serveur, avec sa propre barre et son footer
+  if (pathname === "/") return <>{children}</>;
+
   const page = mounted ? children : null;
 
   if (pathname === "/auth") return <main>{page}</main>;

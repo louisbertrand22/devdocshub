@@ -41,6 +41,33 @@ const avatar = p.locator('button[aria-label="Menu du compte"]');
 const submitActiveTab = () => p.locator('[role="tabpanel"][data-state="active"] button').last().click();
 let docId = null;
 
+await section("landing", async () => {
+  const html = await (await fetch(`${BASE}/`)).text();
+  check("landing : titre présent dans le HTML serveur", html.includes("enfin au même endroit"));
+  await p.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const h1 = await p.locator("h1").allInnerTexts();
+  check("landing : un seul h1 avec le titre", h1.length === 1 && h1[0].includes("enfin au même endroit"), JSON.stringify(h1));
+  const cta = await p.getByRole("link", { name: "Créer un compte gratuit" }).first().getAttribute("href");
+  check("landing : CTA vers /auth?mode=register", cta === "/auth?mode=register", cta ?? "");
+  check("landing : ancres #features et #how", (await p.locator("#features").count()) === 1 && (await p.locator("#how").count()) === 1);
+  const heroLoaded = await p.evaluate(() => [...document.querySelectorAll("img[data-hero]")].some((img) => img.naturalWidth > 0 && img.offsetParent !== null));
+  check("landing : image du hero chargée dans le thème courant", heroLoaded);
+  const overflows = [];
+  for (const width of [320, 360, 390]) {
+    await p.setViewportSize({ width, height: 800 });
+    const extra = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    if (extra > 0) overflows.push(`${width}px:+${extra}`);
+  }
+  await p.setViewportSize({ width: 1440, height: 900 });
+  check("landing : aucun débordement horizontal de 320 à 390px", overflows.length === 0, overflows.join(" "));
+  const og = await p.evaluate(() => document.querySelector('meta[property="og:image"]')?.getAttribute("content") ?? null);
+  check("landing : og:image absente ou absolue hors localhost", og === null || (/^https?:\/\//.test(og) && !/localhost/.test(og)), String(og));
+  await p.getByRole("link", { name: "Créer un compte gratuit" }).first().click();
+  await p.waitForURL("**/auth?mode=register", { timeout: 10000 });
+  const tab = await p.locator('[role="tab"][data-state="active"]').innerText();
+  check("landing : /auth?mode=register ouvre l'onglet inscription", tab.includes("Créer un compte"), tab);
+});
+
 await section("auth", async () => {
   await p.goto(`${BASE}/auth`, { waitUntil: "networkidle" });
   const look = await p.evaluate(() => ({
@@ -69,6 +96,16 @@ await section("auth", async () => {
   await p.waitForURL("**/dashboard", { timeout: 15000 });
   await avatar.waitFor({ timeout: 15000 });
   check("connexion → dashboard + avatar", true);
+});
+
+await section("landing connecté", async () => {
+  await p.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+  const hidden = await p.evaluate(() => {
+    const el = document.querySelector("[data-landing]");
+    return !el || getComputedStyle(el).visibility === "hidden";
+  });
+  await p.waitForURL("**/dashboard", { timeout: 10000 });
+  check("landing : connecté → /dashboard, landing jamais visible", hidden);
 });
 
 await section("docs", async () => {

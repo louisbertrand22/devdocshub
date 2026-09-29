@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono";
 import Providers from "./providers";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { themeInitScript } from "@/lib/theme";
+import { landingInitScript } from "@/lib/landing";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: landingInitScript }} />
       </head>
       <body>
         <Providers>

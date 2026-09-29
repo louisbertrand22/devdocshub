@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2, Lock, LogOut, Mail, User as UserIcon } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/store";
@@ -70,7 +70,10 @@ export default function AuthPanel() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<"login" | "register">(
+    searchParams.get("mode") === "register" ? "register" : "login",
+  );
   const [registerData, setRegisterData] = useState({ email: "", password: "", username: "" });
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [showPwLogin, setShowPwLogin] = useState(false);
