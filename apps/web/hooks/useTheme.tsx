@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { THEME_STORAGE_KEY, type Theme } from "@/lib/theme";
+import { THEME_STORAGE_KEY, resolveTheme, type Theme } from "@/lib/theme";
+import { safeSetItem, safeGetItem } from "@/lib/safe-storage";
 
 function readTheme(): Theme {
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
@@ -9,11 +10,18 @@ function readTheme(): Theme {
 
 function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");
-  try {
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
-  } catch {
-    // stockage indisponible : le choix vaut pour la session en cours
-  }
+  // stockage indisponible : le choix vaut pour la session en cours
+  safeSetItem(THEME_STORAGE_KEY, theme);
+}
+
+/**
+ * Réapplique le thème stocké sur <html>. Filet de sécurité si React re-rend la
+ * racine après une erreur d'hydratation (il remettrait class="dark" du serveur).
+ */
+export function applyStoredTheme(): Theme {
+  const theme = resolveTheme(safeGetItem(THEME_STORAGE_KEY));
+  document.documentElement.classList.toggle("dark", theme === "dark");
+  return theme;
 }
 
 export function useTheme() {
@@ -22,7 +30,7 @@ export function useTheme() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setThemeState(readTheme());
+    setThemeState(applyStoredTheme());
     setMounted(true);
   }, []);
 

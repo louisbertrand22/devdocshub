@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useAuthInit } from "@/hooks/useAuthInit";
 import { useMounted } from "@/hooks/useMounted";
+import { applyStoredTheme } from "@/hooks/useTheme";
 import { isSectionPath } from "@/lib/nav";
 import { SidebarSlotProvider } from "./sidebar-slot";
 import { TopBar } from "./top-bar";
@@ -16,10 +18,13 @@ import { Footer } from "./footer";
  * classe de thème de <html>). On ne les monte donc qu'après hydratation, comme
  * avant la refonte (où tout l'app était en ssr: false).
  */
-export function SiteChrome({ children }: { children: React.ReactNode }) {
+export function SiteChrome({ children, year }: { children: React.ReactNode; year: number }) {
   const pathname = usePathname();
   const mounted = useMounted();
   useAuthInit();
+  useEffect(() => {
+    applyStoredTheme();
+  }, []);
 
   const page = mounted ? children : null;
 
@@ -36,7 +41,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             <div className="mx-auto w-full max-w-6xl px-4 py-8 md:px-8 md:py-10">{page}</div>
           )}
         </main>
-        <Footer />
+        <Footer year={year} />
       </div>
     </SidebarSlotProvider>
   );

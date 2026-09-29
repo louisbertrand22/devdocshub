@@ -5,8 +5,8 @@ import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Search } from "lucide-react";
-import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/store";
+import { useDocsStore } from "@/lib/docs-store";
 import { filterCommands, type Command } from "@/lib/command-filter";
 import type { DocSummary } from "@/lib/docs-tree";
 import { cn } from "@/lib/utils";
@@ -34,29 +34,21 @@ export function CommandPalette({ open, onOpenChange }: Props) {
   const router = useRouter();
   const { token, apiBase } = useAuth();
   const [query, setQuery] = useState("");
-  const [docs, setDocs] = useState<DocSummary[]>([]);
+  const { docs, load } = useDocsStore();
   const [active, setActive] = useState(0);
 
-  // Docs chargés à chaque ouverture ; erreur API → palette limitée aux pages
+  // Docs servis par le cache partagé (pas de requête à chaque ouverture)
   useEffect(() => {
     if (!open) {
       setQuery("");
       return;
     }
-    if (!token) {
-      setDocs([]);
-      return;
-    }
-    let cancelled = false;
-    apiFetch<DocSummary[]>("/docs/all", {}, apiBase, token)
-      .then((data) => { if (!cancelled) setDocs(Array.isArray(data) ? data : []); })
-      .catch(() => { if (!cancelled) setDocs([]); });
-    return () => { cancelled = true; };
-  }, [open, token, apiBase]);
+    if (token) void load(token, apiBase);
+  }, [open, token, apiBase, load]);
 
   const results = useMemo(
-    () => filterCommands([...PAGE_COMMANDS, ...docs.map(docToCommand)], query).slice(0, MAX_RESULTS),
-    [docs, query],
+    () => filterCommands([...PAGE_COMMANDS, ...(token ? docs : []).map(docToCommand)], query).slice(0, MAX_RESULTS),
+    [docs, query, token],
   );
 
   useEffect(() => setActive(0), [query]);

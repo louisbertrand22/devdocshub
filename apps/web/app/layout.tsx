@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
-          <SiteChrome>{children}</SiteChrome>
+          <SiteChrome year={new Date().getFullYear()}>{children}</SiteChrome>
         </Providers>
       </body>
     </html>
