@@ -33,6 +33,8 @@ export function excerpt(text: string | null | undefined, max = 160): string {
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/`([^`]*)`/g, "$1")
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/^\s*\|?(?:\s*:?-+:?\s*\|)+\s*:?-*:?\s*$/gm, " ")
+    .replace(/\|/g, " ")
     .replace(/^\s{0,3}(?:#{1,6}|>|[-*+]|\d+\.)\s+/gm, "")
     .replace(/[*_~]+/g, "")
     .replace(/\s+/g, " ")

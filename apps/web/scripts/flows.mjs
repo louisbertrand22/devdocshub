@@ -119,6 +119,28 @@ await section("collections", async () => {
   check("collection créée → /collections", true);
 });
 
+await section("listes", async () => {
+  await p.goto(`${BASE}/docs`, { waitUntil: "networkidle" });
+  const row = p.locator("main li", { hasText: docTitle });
+  check("/docs : ligne du doc avec badge techno", (await row.count()) === 1 && (await row.getByText("~/flowtech").count()) === 1);
+  await p.getByLabel("Filtrer les docs").fill("zzz-aucun-resultat");
+  check("/docs : filtre sans résultat → état vide", (await p.getByText("Aucun résultat").count()) === 1);
+  await p.goto(`${BASE}/docs?tech=flowtech`, { waitUntil: "networkidle" });
+  const techRows = await p.locator("main ul > li").count();
+  check("/docs?tech= préfiltre la techno", techRows >= 1 && (await p.locator("main li", { hasText: docTitle }).count()) === 1, `${techRows} lignes`);
+
+  await p.goto(`${BASE}/notes?pinned=1`, { waitUntil: "networkidle" });
+  const pinnedSidebar = await p.locator('aside nav[aria-label="Notes"] a[aria-current="page"]').innerText();
+  const pinnedBox = await p.getByRole("checkbox", { name: "Épinglées seulement" }).getAttribute("data-state");
+  check("/notes?pinned=1 : sidebar et case synchronisées", pinnedSidebar.includes("Épinglées") && pinnedBox === "checked", `${pinnedSidebar} / ${pinnedBox}`);
+  await p.goto(`${BASE}/notes?doc=${docId}`, { waitUntil: "networkidle" });
+  const noteRows = p.locator("main li", { hasText: "Note de test flow" });
+  check("/notes?doc= : notes du doc, avec son titre", (await noteRows.count()) === 1 && (await noteRows.getByText(docTitle).count()) === 1);
+
+  await p.goto(`${BASE}/collections`, { waitUntil: "networkidle" });
+  check("/collections : ligne de la collection", (await p.locator("main li", { hasText: `Flow col ${stamp}` }).count()) === 1);
+});
+
 await section("clavier", async () => {
   await p.goto(`${BASE}/dashboard`, { waitUntil: "networkidle" });
   const order = [];

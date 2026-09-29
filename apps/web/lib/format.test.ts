@@ -43,3 +43,7 @@ test("excerpt strips markdown and collapses whitespace", () => {
 test("excerpt truncates on a word boundary with an ellipsis", () => {
   assert.equal(excerpt("alpha beta gamma delta", 12), "alpha beta…");
 });
+
+test("excerpt flattens markdown tables", () => {
+  assert.equal(excerpt("Intro\n\n| Clé | Valeur |\n|---|:---:|\n| a | b |"), "Intro Clé Valeur a b");
+});
