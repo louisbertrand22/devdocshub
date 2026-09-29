@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { DEFAULT_API_BASE, apiFetch } from "./api";
+import { DEFAULT_API_BASE, apiFetch, isUnauthorized } from "./api";
 import { safeGetItem, safeRemoveItem, safeSetItem } from "./safe-storage";
 
 type User = { id?: string; email?: string; username?: string; name?: string; role?: string } | null;
@@ -66,8 +66,12 @@ async function loadUserWithToken(
     set({ user, loading: false });
   } catch (error) {
     console.error("Failed to load user:", error);
-    // Token might be invalid, clear it
-    set({ user: null, token: null, loading: false });
-    safeRemoveItem("ddh_token");
+    if (isUnauthorized(error)) {
+      set({ user: null, token: null, loading: false });
+      safeRemoveItem("ddh_token");
+    } else {
+      // 429, 5xx ou réseau : la session reste valide, on garde le token.
+      set({ loading: false });
+    }
   }
 }

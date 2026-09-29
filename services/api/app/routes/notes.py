@@ -1,23 +1,23 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
-from typing import List
-from app.models.note import Note, get_my_notes, get_count_notes, get_all_notes, get_note_by_id, get_notes_by_doc, insert_note, delete_note, update_note
+from fastapi import APIRouter, Depends, HTTPException, Response
+from typing import List, Optional
+from app.models.note import Note, get_my_notes, get_count_my_notes, get_note_by_id, get_notes_by_doc, insert_note, delete_note, update_note
 from app.utils.auth_dep import require_roles
-from fastapi import Depends
 from app.schemas.note import NoteCreate, NoteUpdate, NoteOut
 from uuid import UUID
 
 router = APIRouter()
 
-@router.get("/count", response_model=int, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def count_notes():
-    return get_count_notes()
+# Les notes sont privées : l'auteur vient toujours du token, jamais d'un paramètre client.
+current_user = require_roles("user", "maintainer", "admin")
 
-@router.get("/count/mine", response_model=int, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def count_my_notes(uuid: UUID):
-    # frontend calls /notes/count/mine?uuid=<user-uuid>
-    notes = get_my_notes(uuid)
-    return len(notes)
+@router.get("/count", response_model=int)
+async def count_notes(user: dict = Depends(current_user)):
+    return get_count_my_notes(user["id"])
+
+@router.get("/count/mine", response_model=int)
+async def count_my_notes(uuid: Optional[UUID] = None, user: dict = Depends(current_user)):
+    # `uuid` est accepté pour compatibilité mais ignoré.
+    return get_count_my_notes(user["id"])
 
 def serialize(note: Note) -> NoteOut:
     return NoteOut(
@@ -30,49 +30,45 @@ def serialize(note: Note) -> NoteOut:
         is_pinned=note.is_pinned
     )
 
-@router.get("", response_model=List[NoteOut], dependencies=[Depends(require_roles("maintainer", "admin", "user"))])
-async def list_notes():
-    notes = get_all_notes()
-    return [serialize(note) for note in notes]
+@router.get("", response_model=List[NoteOut])
+async def list_notes(user: dict = Depends(current_user)):
+    return [serialize(note) for note in get_my_notes(user["id"])]
 
-@router.get("/mine", response_model=List[NoteOut], dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def list_my_notes(uuid: UUID):
-    # frontend calls /notes/mine?uuid=<user-uuid>
-    notes = get_my_notes(uuid)
-    return [serialize(note) for note in notes]
+@router.get("/mine", response_model=List[NoteOut])
+async def list_my_notes(uuid: Optional[UUID] = None, user: dict = Depends(current_user)):
+    # `uuid` est accepté pour compatibilité mais ignoré.
+    return [serialize(note) for note in get_my_notes(user["id"])]
 
-@router.post("", response_model=NoteOut, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def add_note(note: NoteCreate):
+@router.post("", response_model=NoteOut)
+async def add_note(note: NoteCreate, user: dict = Depends(current_user)):
     new_note = insert_note(
         doc_id=note.doc_id,
-        user_id=note.user_id,
+        user_id=user["id"],
         content=note.content,
         is_pinned=note.is_pinned
     )
     return serialize(new_note)
 
-@router.get("/doc/{doc_id:uuid}/notes", response_model=List[NoteOut], dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def list_notes_by_doc(doc_id: UUID):
-    notes = get_notes_by_doc(doc_id)
-    return [serialize(note) for note in notes]
+@router.get("/doc/{doc_id:uuid}/notes", response_model=List[NoteOut])
+async def list_notes_by_doc(doc_id: UUID, user: dict = Depends(current_user)):
+    return [serialize(note) for note in get_notes_by_doc(doc_id, user["id"])]
 
-@router.delete("/{note_id:uuid}", status_code=204, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def remove_note(note_id: UUID, user_id: UUID):
-    success = delete_note(note_id, user_id)
-    if not success:
-        return {"detail": "Note not found or not authorized"}
-    return {"detail": "Note deleted successfully"}
+@router.delete("/{note_id:uuid}", status_code=204)
+async def remove_note(note_id: UUID, user_id: Optional[UUID] = None, user: dict = Depends(current_user)):
+    if not delete_note(note_id, user["id"]):
+        raise HTTPException(status_code=404, detail="Note introuvable")
+    return Response(status_code=204)
 
-@router.put("/{note_id:uuid}", response_model=NoteOut, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def modify_note(note_id: UUID, user_id: UUID, content: str):
-    updated_note = update_note(note_id, user_id, content, is_pinned=True)
+@router.put("/{note_id:uuid}", response_model=NoteOut)
+async def modify_note(note_id: UUID, body: NoteUpdate, user: dict = Depends(current_user)):
+    updated_note = update_note(note_id, user["id"], body.content, is_pinned=body.is_pinned)
     if not updated_note:
-        return {"detail": "Note not found or not authorized"}
+        raise HTTPException(status_code=404, detail="Note introuvable")
     return serialize(updated_note)
 
-@router.get("/{note_id:uuid}", response_model=NoteOut, dependencies=[Depends(require_roles("user", "maintainer", "admin"))])
-async def get_note(note_id: UUID):
+@router.get("/{note_id:uuid}", response_model=NoteOut)
+async def get_note(note_id: UUID, user: dict = Depends(current_user)):
     note = get_note_by_id(note_id)
-    if not note:
-        return {"detail": "Note not found"}
+    if not note or note.user_id != user["id"]:
+        raise HTTPException(status_code=404, detail="Note introuvable")
     return serialize(note)

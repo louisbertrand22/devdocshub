@@ -55,7 +55,7 @@ function NewNoteForm() {
     if (next.doc || next.content) return;
     setSubmitting(true);
     try {
-      const payload = { doc_id: form.doc_id, user_id: user.id, content: form.content, is_pinned: form.is_pinned };
+      const payload = { doc_id: form.doc_id, content: form.content, is_pinned: form.is_pinned };
       await apiFetch("/notes", { method: "POST", body: JSON.stringify(payload) }, apiBase, token);
       toast({ title: "Note créée", variant: "success" });
       router.push("/notes");

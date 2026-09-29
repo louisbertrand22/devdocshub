@@ -44,7 +44,12 @@ let docId = null;
 await section("landing", async () => {
   const html = await (await fetch(`${BASE}/`)).text();
   check("landing : titre présent dans le HTML serveur", html.includes("enfin au même endroit"));
+  const heroRequests = [];
+  const onRequest = (r) => { if (/hero-(dark|light)\.png/.test(decodeURIComponent(r.url()))) heroRequests.push(decodeURIComponent(r.url()).match(/hero-(dark|light)/)[1]); };
+  p.on("request", onRequest);
   await p.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  p.off("request", onRequest);
+  check("landing : seule la capture du thème courant est téléchargée", heroRequests.length > 0 && heroRequests.every((t) => t === "dark"), heroRequests.join(","));
   const h1 = await p.locator("h1").allInnerTexts();
   check("landing : un seul h1 avec le titre", h1.length === 1 && h1[0].includes("enfin au même endroit"), JSON.stringify(h1));
   const cta = await p.getByRole("link", { name: "Créer un compte gratuit" }).first().getAttribute("href");
@@ -106,6 +111,38 @@ await section("landing connecté", async () => {
   });
   await p.waitForURL("**/dashboard", { timeout: 10000 });
   check("landing : connecté → /dashboard, landing jamais visible", hidden);
+
+  // Déconnexion puis retour sur / en navigation client : `data-authed` ne doit pas rester collé.
+  await avatar.click();
+  await p.getByRole("menuitem", { name: "Se déconnecter" }).click();
+  await p.waitForURL("**/auth", { timeout: 10000 });
+  await p.locator('a[href="/"]').first().click();
+  await p.waitForURL(`${BASE}/`, { timeout: 10000 });
+  await p.locator("h1").waitFor({ timeout: 10000 });
+  const visible = await p.evaluate(() => getComputedStyle(document.querySelector("[data-landing]")).visibility !== "hidden");
+  check("landing : visible après déconnexion, en navigation client", visible);
+
+  // Connexion, puis Précédent jusqu'à / : la landing ne doit jamais être peinte.
+  await p.evaluate(() => {
+    window.__landingFlash = false;
+    new MutationObserver(() => {
+      const el = document.querySelector("[data-landing]");
+      if (el && localStorage.getItem("ddh_token") && getComputedStyle(el).visibility !== "hidden") window.__landingFlash = true;
+    }).observe(document.body, { childList: true, subtree: true });
+  });
+  await p.getByRole("link", { name: "Se connecter" }).first().click();
+  await p.waitForURL("**/auth", { timeout: 10000 });
+  await p.fill("#login-email", email);
+  await p.fill("#login-password", password);
+  await p.press("#login-password", "Enter");
+  await p.waitForURL("**/dashboard", { timeout: 15000 });
+  await avatar.waitFor({ timeout: 15000 });
+  await p.goBack();
+  await p.waitForURL("**/auth", { timeout: 10000 });
+  await p.goBack();
+  await p.waitForURL("**/dashboard", { timeout: 10000 });
+  await avatar.waitFor({ timeout: 15000 });
+  check("landing : Précédent vers / une fois connecté → jamais affichée", !(await p.evaluate(() => window.__landingFlash)));
 });
 
 await section("docs", async () => {

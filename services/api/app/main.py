@@ -26,6 +26,9 @@ from app.utils.limits import default_limiter, _client_ip
 
 @app.middleware("http")
 async def global_rate_limit(request: Request, call_next):
+    # Les preflights CORS doublent chaque requête du navigateur : ne pas les compter.
+    if request.method == "OPTIONS":
+        return await call_next(request)
     key = f"global:{_client_ip(request)}"
     if not default_limiter.allow(key):
         return JSONResponse(

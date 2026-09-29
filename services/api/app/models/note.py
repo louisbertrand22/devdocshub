@@ -17,9 +17,9 @@ class Note(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-def get_notes_by_doc(doc_id):
+def get_notes_by_doc(doc_id, user_id):
     with SessionLocal() as session:
-        return session.query(Note).filter(Note.doc_id == doc_id).all()
+        return session.query(Note).filter(Note.doc_id == doc_id, Note.user_id == user_id).all()
 
 def insert_note(doc_id, user_id, content, is_pinned=False):
     with SessionLocal() as session:
@@ -43,14 +43,16 @@ def delete_note(note_id, user_id):
         session.commit()
         return True
 
-def update_note(note_id, user_id, content, is_pinned=True):
+def update_note(note_id, user_id, content, is_pinned=None):
+    """`is_pinned=None` conserve l'état actuel."""
     with SessionLocal() as session:
         note = session.query(Note).filter(Note.id == note_id, Note.user_id == user_id).first()
         if not note:
             return None
         note.content = content
         note.updated_at = datetime.utcnow()
-        note.is_pinned = note.is_pinned
+        if is_pinned is not None:
+            note.is_pinned = is_pinned
         session.commit()
         session.refresh(note)
         return note
@@ -74,3 +76,6 @@ def get_count_notes():
 def get_my_notes(user_id):
     with SessionLocal() as session:
         return session.query(Note).filter(Note.user_id == user_id).all()
+def get_count_my_notes(user_id):
+    with SessionLocal() as session:
+        return session.query(Note).filter(Note.user_id == user_id).count()

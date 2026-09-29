@@ -5,7 +5,7 @@ from uuid import UUID
 
 class NoteCreate(BaseModel):
     doc_id: UUID = Field(..., description="UUID du document")
-    user_id: UUID = Field(..., description="UUID de l'utilisateur")
+    user_id: Optional[UUID] = Field(None, description="Ignoré : l'auteur vient du token")
     content: str = Field(..., min_length=1, description="Contenu de la note")
     is_pinned: Optional[bool] = Field(False, description="Indique si la note est épinglée")
 
