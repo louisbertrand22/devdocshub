@@ -57,17 +57,6 @@
   --color-warning: var(--warning);
   --color-danger: var(--danger);
 
-  /* Alias de compatibilité : classes façon shadcn déjà utilisées dans les pages
-     (text-muted-foreground ×116, text-primary ×25…). Retirés en phase 3. */
-  --color-background: var(--bg);
-  --color-foreground: var(--fg);
-  --color-muted: var(--surface-2);
-  --color-muted-foreground: var(--fg-muted);
-  --color-primary: var(--fg);
-  --color-primary-foreground: var(--bg);
-  --color-destructive: var(--danger);
-  --color-destructive-foreground: #ffffff;
-
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -109,7 +98,10 @@
 /* Contenu markdown (page doc) — les blocs de code sont rendus par <CodeBlock> */
 @layer components {
   .prose { @apply max-w-none text-[15px] leading-7 text-fg; }
-  .prose > :first-child { @apply mt-0; }
+  /* Premier élément collé à l'en-tête, même imbriqué (section > div > h2) */
+  .prose > :first-child,
+  .prose > :first-child > :first-child,
+  .prose > :first-child > :first-child > :first-child { @apply mt-0; }
   .prose h1 { @apply mb-4 mt-10; }
   .prose h2 { @apply mb-3 mt-12 scroll-mt-20 border-b border-border pb-2; }
   .prose h3 { @apply mb-2 mt-8 scroll-mt-20 text-[17px]; }
@@ -127,4 +119,12 @@
   .prose th { @apply border-b border-border px-3 py-2 text-left font-medium; }
   .prose td { @apply border-b border-border px-3 py-2; }
   .prose img { @apply my-5 rounded-lg border border-border; }
+
+  /* Encadrés et métadonnées dans les pages de contenu */
+  .prose .card { @apply my-4 rounded-lg border border-border bg-surface p-5; }
+  .prose .card > :first-child { @apply mt-0; }
+  .prose .card > :last-child { @apply mb-0; }
+  .prose .card h3 { @apply mb-1 mt-0 text-base; }
+  .prose .meta { @apply my-1 font-mono text-xs text-fg-muted; }
+  .prose .no-underline { text-decoration: none; }
 }

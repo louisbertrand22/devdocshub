@@ -158,6 +158,49 @@ await section("tableau de bord", async () => {
   check("/users non admin → réservé aux administrateurs", (await p.getByText("Réservé aux administrateurs").count()) === 1);
 });
 
+await section("pages statiques", async () => {
+  const pages = ["/about", "/blog", "/careers", "/contact", "/cookies", "/licenses", "/privacy", "/terms"];
+  const legacy = /\b(?:slate|blue|purple|green|indigo|violet)-\d|bg-white|muted-foreground|text-primary|bg-muted\b|prose-slate|prose-invert/;
+  for (const path of pages) {
+    await p.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+    const r = await p.evaluate((re) => {
+      const legacyRe = new RegExp(re);
+      const main = document.querySelector("main");
+      const links = [...(main?.querySelectorAll("a") ?? [])];
+      return {
+        h1: document.querySelectorAll("main h1").length,
+        prose: document.querySelectorAll("main article.prose").length,
+        legacy: [...(main?.querySelectorAll("*") ?? [])].filter((el) => legacyRe.test(el.getAttribute("class") ?? "")).length,
+        dead: links.filter((a) => a.getAttribute("href") === "#").length,
+        unsafeExternal: links.filter((a) => /^https?:/.test(a.getAttribute("href") ?? "") && !(a.target === "_blank" && /noopener/.test(a.rel))).length,
+      };
+    }, legacy.source);
+    check(`${path} : gabarit ProsePage, sans classes héritées ni liens morts`, r.h1 === 1 && r.prose === 1 && r.legacy === 0 && r.dead === 0 && r.unsafeExternal === 0, JSON.stringify(r));
+  }
+  for (const path of pages) {
+    await p.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+    const gap = await p.evaluate(() => {
+      const article = document.querySelector("main article.prose");
+      const first = article?.querySelector("h2, h3, p, ul, ol, div.card");
+      return article && first ? Math.round(first.getBoundingClientRect().top - article.getBoundingClientRect().top) : -1;
+    });
+    check(`${path} : pas d'espace vide sous l'en-tête`, gap >= 0 && gap <= 8, `${gap}px`);
+  }
+  await p.goto(`${BASE}/blog`, { waitUntil: "networkidle" });
+  const blog = await p.evaluate(() => {
+    const metas = [...document.querySelectorAll("main article .meta")].filter((m) => /\d{4}/.test(m.textContent ?? ""));
+    return {
+      dates: metas.length,
+      dateUnderTitle: metas.filter((m) => m.previousElementSibling?.tagName === "H2").length,
+      doubleRules: document.querySelectorAll("main article .border-b").length,
+    };
+  });
+  check("/blog : chaque date sous le titre de son article, sans double filet", blog.dates > 0 && blog.dates === blog.dateUnderTitle && blog.doubleRules === 0, JSON.stringify(blog));
+  await p.goto(`${BASE}/licenses`, { waitUntil: "networkidle" });
+  const licenses = await p.locator("main article").innerText();
+  check("/licenses : liste à jour", !licenses.includes("Framer Motion") && ["Next.js", "React", "Tailwind CSS", "Radix UI", "react-markdown", "remark-gfm", "Geist", "class-variance-authority", "tailwind-merge"].every((n) => licenses.includes(n)));
+});
+
 await section("clavier", async () => {
   await p.goto(`${BASE}/dashboard`, { waitUntil: "networkidle" });
   const order = [];
