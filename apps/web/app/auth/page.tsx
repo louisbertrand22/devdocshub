@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import AuthPanel from "@/components/auth-panel";
 import { Logo } from "@/components/layout/logo";
 
@@ -9,7 +10,9 @@ export default function AuthPage() {
           <Logo />
           <p className="text-[13px] text-fg-muted">Tes docs, notes et collections techniques, au même endroit.</p>
         </div>
-        <AuthPanel />
+        <Suspense fallback={null}>
+          <AuthPanel />
+        </Suspense>
         <p className="text-center font-mono text-[11px] text-fg-muted">Première visite ? Crée un compte, c'est gratuit.</p>
       </div>
     </div>

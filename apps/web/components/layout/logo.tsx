@@ -1,8 +1,8 @@
 import Link from "next/link";
 
-export function Logo() {
+export function Logo({ href = "/dashboard" }: { href?: "/" | "/dashboard" }) {
   return (
-    <Link href="/dashboard" className="font-mono text-[15px] font-bold tracking-tight text-fg">
+    <Link href={href} className="font-mono text-[15px] font-bold tracking-tight text-fg">
       devdocs<span className="text-accent">hub</span>
     </Link>
   );
