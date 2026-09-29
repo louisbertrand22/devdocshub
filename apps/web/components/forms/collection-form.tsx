@@ -27,7 +27,7 @@ export default function CollectionForm({ onCreated }: { onCreated?: () => void }
   useEffect(() => {
     if (!token) return;
     void load(token, apiBase);
-    apiFetch<Collection[]>("/collections/", {}, apiBase, token)
+    apiFetch<Collection[]>("/collections/?size=100", {}, apiBase, token)
       .then((c) => setCollections(Array.isArray(c) ? c : []))
       .catch(() => setCollections([]));
   }, [token, apiBase, load]);

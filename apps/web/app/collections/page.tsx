@@ -24,7 +24,7 @@ export default function CollectionsPage() {
     if (!token) return;
     let cancelled = false;
     setState({ status: "loading" });
-    apiFetch<Collection[]>("/collections/", {}, apiBase, token)
+    apiFetch<Collection[]>("/collections/?size=100", {}, apiBase, token)
       .then((c) => {
         if (!cancelled) setState({ status: "ready", collections: Array.isArray(c) ? c : [] });
       })
