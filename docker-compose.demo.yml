@@ -1,0 +1,42 @@
+# Stack jetable pour générer les captures de la landing (pnpm --filter web landing:capture).
+# Base dédiée, ports distincts, aucun container_name : n'interfère pas avec docker-compose.yml.
+name: devdocshub-demo
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+      POSTGRES_DB: demo
+    volumes:
+      - demodata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U demo"]
+      interval: 2s
+      retries: 30
+
+  api:
+    build: ./services/api
+    environment:
+      DATABASE_URL: postgresql+psycopg://demo:demo@db:5432/demo
+      JWT_SECRET: demo-only-not-a-secret
+    ports:
+      - "8100:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE: "http://localhost:8100"
+    ports:
+      - "3100:3000"
+    depends_on:
+      - api
+
+volumes:
+  demodata:
