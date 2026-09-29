@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, Lock, LogOut, Mail, User as UserIcon } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/store";
-import { isEmail, passwordScore } from "@/lib/auth-validation";
+import { isEmail, isStrongPassword, passwordScore } from "@/lib/auth-validation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,7 +94,7 @@ export default function AuthPanel() {
     const { email, password, username } = registerData;
     if (!username.trim()) return setErrors({ register: "Le nom est requis." });
     if (!isEmail(email)) return setErrors({ register: "Email invalide." });
-    if (passwordScore(password) < 3)
+    if (!isStrongPassword(password))
       return setErrors({ register: "Mot de passe trop faible (8 caractères min., mélangez chiffres, majuscules et symboles)." });
     setLoadingRegister(true);
     try {

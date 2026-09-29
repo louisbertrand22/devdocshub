@@ -1,33 +1,23 @@
 "use client";
 
 import { useState, type ReactElement, type ReactNode } from "react";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Check, Copy } from "lucide-react";
-import { createSlugger, languageFromClassName, nodeText } from "@/lib/markdown";
+import { languageFromClassName, nodeText, remarkHeadingIds } from "@/lib/markdown";
 import { cn } from "@/lib/utils";
 
+// Défini une fois : les titres et blocs de code ne sont pas remontés à chaque rendu
+const COMPONENTS: Components = {
+  pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
+};
+const REMARK_PLUGINS = [remarkGfm, remarkHeadingIds];
+
 export function Markdown({ content, className }: { content: string; className?: string }) {
-  // Nouveau slugger à chaque rendu : même séquence d'ids que extractHeadings (sommaire)
-  const slugger = createSlugger();
+  // Les ids des h2/h3 sont posés dans l'arbre par remarkHeadingIds (mêmes que le sommaire)
   return (
     <div className={cn("prose", className)}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          h2: ({ node: _node, children, ...props }) => (
-            <h2 id={slugger.slug(nodeText(children))} {...props}>
-              {children}
-            </h2>
-          ),
-          h3: ({ node: _node, children, ...props }) => (
-            <h3 id={slugger.slug(nodeText(children))} {...props}>
-              {children}
-            </h3>
-          ),
-          pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
-        }}
-      >
+      <ReactMarkdown remarkPlugins={REMARK_PLUGINS} components={COMPONENTS}>
         {content}
       </ReactMarkdown>
     </div>

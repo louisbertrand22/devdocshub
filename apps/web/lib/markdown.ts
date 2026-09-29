@@ -1,3 +1,9 @@
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkGfm from "remark-gfm";
+import { toString } from "mdast-util-to-string";
+import { visit } from "unist-util-visit";
+
 export type Heading = { depth: 2 | 3; text: string; id: string };
 
 export function slugify(text: string): string {
@@ -28,30 +34,36 @@ export function createSlugger() {
   };
 }
 
-function inlineMarkdownToText(s: string): string {
-  return s
-    .replace(/`([^`]*)`/g, "$1")
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/(\*\*|__|~~|\*|_)(.+?)\1/g, "$2")
-    .trim();
+type TreeNode = { type: string; depth?: number; data?: { hProperties?: Record<string, unknown> } };
+
+/** Parcourt les h2/h3 dans l'ordre du document (y compris dans les citations). */
+function forEachTocHeading(tree: unknown, fn: (node: TreeNode, heading: Heading) => void) {
+  const slugger = createSlugger();
+  visit(tree as Parameters<typeof visit>[0], "heading", (node) => {
+    const heading = node as unknown as TreeNode;
+    if (heading.depth !== 2 && heading.depth !== 3) return;
+    const text = toString(node).trim();
+    fn(heading, { depth: heading.depth, text, id: slugger.slug(text) });
+  });
 }
 
-/** Titres h2/h3 hors blocs de code, avec les mêmes ids que le rendu. */
+/**
+ * Plugin remark : écrit l'id des h2/h3 dans l'arbre. Le rendu reste pur (StrictMode,
+ * re-rendus) et les ids sont exactement ceux du sommaire (même parcours).
+ */
+export function remarkHeadingIds() {
+  return (tree: unknown) =>
+    forEachTocHeading(tree, (node, { id }) => {
+      node.data = { ...(node.data ?? {}), hProperties: { ...(node.data?.hProperties ?? {}), id } };
+    });
+}
+
+const parser = unified().use(remarkParse).use(remarkGfm);
+
+/** Titres h2/h3 du document, avec les ids posés par remarkHeadingIds. */
 export function extractHeadings(markdown: string): Heading[] {
-  const slugger = createSlugger();
   const headings: Heading[] = [];
-  let inFence = false;
-  for (const line of markdown.split("\n")) {
-    if (/^\s*(?:```|~~~)/.test(line)) {
-      inFence = !inFence;
-      continue;
-    }
-    if (inFence) continue;
-    const match = /^(#{2,3})\s+(.+?)\s*#*\s*$/.exec(line);
-    if (!match) continue;
-    const text = inlineMarkdownToText(match[2]);
-    headings.push({ depth: match[1].length as 2 | 3, text, id: slugger.slug(text) });
-  }
+  forEachTocHeading(parser.runSync(parser.parse(markdown)), (_node, heading) => headings.push(heading));
   return headings;
 }
 

@@ -47,3 +47,9 @@ test("excerpt truncates on a word boundary with an ellipsis", () => {
 test("excerpt flattens markdown tables", () => {
   assert.equal(excerpt("Intro\n\n| Clé | Valeur |\n|---|:---:|\n| a | b |"), "Intro Clé Valeur a b");
 });
+
+test("excerpt stays fast on long runs of blank lines (no catastrophic backtracking)", () => {
+  const start = performance.now();
+  excerpt("\n".repeat(4000) + "fin");
+  assert.ok(performance.now() - start < 200, `took ${Math.round(performance.now() - start)} ms`);
+});

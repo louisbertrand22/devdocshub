@@ -12,3 +12,8 @@ export function passwordScore(password: string): number {
   if (/[^A-Za-z0-9]/.test(password)) score++;
   return score;
 }
+
+/** Règle affichée à l'utilisateur : 8 caractères minimum et au moins 3 critères sur 5. */
+export function isStrongPassword(password: string): boolean {
+  return password.length >= 8 && passwordScore(password) >= 3;
+}

@@ -1,6 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createSlugger, extractHeadings, languageFromClassName, nodeText, slugify, slugifyHeading } from "./markdown.ts";
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkGfm from "remark-gfm";
+import { visit } from "unist-util-visit";
+import { createSlugger, extractHeadings, languageFromClassName, nodeText, remarkHeadingIds, slugify, slugifyHeading } from "./markdown.ts";
 
 test("slugify lowercases, strips accents and punctuation", () => {
   assert.equal(slugify("Détails & Options (v2)"), "details-options-v2");
@@ -53,4 +57,25 @@ test("languageFromClassName reads language-xxx", () => {
   assert.equal(languageFromClassName("language-bash"), "bash");
   assert.equal(languageFromClassName("hljs language-c++"), "c++");
   assert.equal(languageFromClassName(undefined), null);
+});
+
+test("extractHeadings decodes entities like the renderer (A &amp; B → a-b)", () => {
+  assert.deepEqual(extractHeadings("## A &amp; B"), [{ depth: 2, text: "A & B", id: "a-b" }]);
+});
+
+test("extractHeadings sees blockquote and setext headings, in document order", () => {
+  const md = "> ## Cité\n\nSetext\n------\n\n## Cité";
+  assert.deepEqual(extractHeadings(md).map((h) => h.id), ["cite", "setext", "cite-2"]);
+});
+
+test("a ``` line inside a ~~~ fence does not end the fence", () => {
+  assert.deepEqual(extractHeadings("~~~\n```\n## pas un titre\n```\n~~~\n\n## Vrai").map((h) => h.text), ["Vrai"]);
+});
+
+test("ids written into the tree by remarkHeadingIds equal the TOC ids", () => {
+  const md = "## Usage\n\n### Avec `docker`\n\n> ## Usage\n\n## A &amp; B";
+  const tree = unified().use(remarkParse).use(remarkGfm).use(remarkHeadingIds).runSync(unified().use(remarkParse).parse(md));
+  const ids: string[] = [];
+  visit(tree, "heading", (node: any) => { if (node.data?.hProperties?.id) ids.push(node.data.hProperties.id); });
+  assert.deepEqual(ids, extractHeadings(md).map((h) => h.id));
 });
