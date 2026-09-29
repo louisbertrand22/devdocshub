@@ -1,287 +1,89 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { User, Mail, Calendar, Shield, Loader2, FileText, Folder, StickyNote } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/lib/store";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api";
-import "./profile.css";
+import { useAuth } from "@/lib/store";
+import { formatDate } from "@/lib/format";
+import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page/page-header";
+import { StatCard } from "@/components/page/stat-card";
+import { Notice } from "@/components/page/notice";
 
-type UserDetails = {
-  id: string;
-  email: string;
-  username: string;
-  role: string;
-  created_at?: string;
-};
-
-type UserStats = {
-  docs?: number;
-  collections?: number;
-  notes?: number;
-};
+type UserDetails = { id: string; email: string; username: string; role: string; created_at?: string };
+type Stats = { docs?: number; collections?: number; notes?: number };
 
 export default function Profile() {
-  const { token, apiBase, user } = useAuth();
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const [stats, setStats] = useState<UserStats>({});
-  const [loading, setLoading] = useState(true);
-  const [statsLoading, setStatsLoading] = useState(true);
+  const { token, apiBase } = useAuth();
+  const [details, setDetails] = useState<UserDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
-      if (!token) {
-        setError("Non authentifié. Veuillez vous connecter.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const data = await apiFetch<UserDetails>("/auth/me", {}, apiBase, token);
-        setUserDetails(data);
-        setError(null);
-      } catch (e: any) {
-        setError(e.message || "Erreur lors du chargement du profil");
-      } finally {
-        setLoading(false);
-      }
+    if (!token) return;
+    let cancelled = false;
+    apiFetch<UserDetails>("/auth/me", {}, apiBase, token)
+      .then((d) => {
+        if (!cancelled) setDetails(d);
+      })
+      .catch((e: Error) => {
+        if (!cancelled) setError(e?.message || "Impossible de charger le profil.");
+      });
+    return () => {
+      cancelled = true;
     };
-
-    fetchUserDetails();
   }, [token, apiBase]);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      if (!token || !userDetails?.id) {
-        setStatsLoading(false);
-        return;
-      }
-
-      setStatsLoading(true);
-      try {
-        const [docsCount, collectionsCount, notesCount] = await Promise.all([
-          apiFetch<number>("/docs/count", {}, apiBase, token).catch(() => undefined),
-          apiFetch<number>("/collections/count/mine", {}, apiBase, token).catch(() => undefined),
-          apiFetch<number>(`/notes/count/mine?uuid=${userDetails.id}`, {}, apiBase, token).catch(() => undefined),
-        ]);
-
-        setStats({
-          docs: docsCount,
-          collections: collectionsCount,
-          notes: notesCount,
-        });
-      } catch (e: any) {
-        console.error("Error fetching stats:", e);
-      } finally {
-        setStatsLoading(false);
-      }
-    };
-
-    if (userDetails?.id) {
-      fetchStats();
-    }
-  }, [token, apiBase, userDetails?.id]);
-
-  if (loading) {
-    return (
-      <div className="profile-loading">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-        <p className="text-muted-foreground mt-2">Chargement de votre profil...</p>
-      </div>
-    );
-  }
-
-  if (error || !userDetails) {
-    return (
-      <div className="profile-error">
-        <p className="text-destructive">{error || "Impossible de charger le profil"}</p>
-        <p className="text-sm text-muted-foreground mt-2">
-          Veuillez vous connecter pour accéder à votre profil.
-        </p>
-      </div>
-    );
-  }
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "Non disponible";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("fr-FR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    if (!token || !details?.id) return;
+    let cancelled = false;
+    Promise.all([
+      apiFetch<number>("/docs/count", {}, apiBase, token).catch(() => undefined),
+      apiFetch<number>("/collections/count/mine", {}, apiBase, token).catch(() => undefined),
+      apiFetch<number>(`/notes/count/mine?uuid=${details.id}`, {}, apiBase, token).catch(() => undefined),
+    ]).then(([docs, collections, notes]) => {
+      if (!cancelled) setStats({ docs, collections, notes });
     });
-  };
-
-  // Obtenir les initiales pour l'avatar
-  const initials = userDetails.username
-    ? userDetails.username.substring(0, 2).toUpperCase()
-    : userDetails.email.substring(0, 2).toUpperCase();
+    return () => {
+      cancelled = true;
+    };
+  }, [token, apiBase, details?.id]);
 
   return (
-    <div className="profile-container">
-      {/* Carte principale avec avatar et informations de base */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <Card className="profile-main-card">
-          <CardContent className="profile-main-content">
-            <div className="profile-avatar-section">
-              <div className="profile-avatar-large">{initials}</div>
-              <div className="profile-user-info">
-                <h2 className="profile-username">{userDetails.username}</h2>
-                <p className="profile-email">{userDetails.email}</p>
-                <Badge variant="secondary" className="profile-role-badge">
-                  {userDetails.role === "admin" ? "Administrateur" : "Utilisateur"}
-                </Badge>
-              </div>
+    <div className="mx-auto flex max-w-3xl flex-col gap-8">
+      <PageHeader title="Mon profil" description="Tes informations et ton activité." />
+      {!token ? (
+        <Notice>
+          <Link href="/auth">Connecte-toi</Link> pour voir ton profil.
+        </Notice>
+      ) : error ? (
+        <Notice tone="danger">{error}</Notice>
+      ) : !details ? (
+        <div className="h-28 animate-pulse rounded-lg border border-border bg-surface" aria-label="Chargement du profil" />
+      ) : (
+        <>
+          <section className="flex items-center gap-4 rounded-lg border border-border bg-surface p-5">
+            <div className="grid size-14 shrink-0 place-items-center rounded-full bg-accent-subtle font-mono text-xl font-semibold text-accent ring-1 ring-accent-border">
+              {(details.username || details.email)[0].toUpperCase()}
             </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Cartes d'informations détaillées */}
-      <div className="profile-details-grid">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
-          <Card className="profile-info-card">
-            <CardHeader className="profile-info-header">
-              <CardTitle className="profile-info-title">
-                <User className="h-5 w-5" />
-                <span>Nom d'utilisateur</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="profile-info-value">{userDetails.username}</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
-          <Card className="profile-info-card">
-            <CardHeader className="profile-info-header">
-              <CardTitle className="profile-info-title">
-                <Mail className="h-5 w-5" />
-                <span>Adresse email</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="profile-info-value">{userDetails.email}</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.3 }}
-        >
-          <Card className="profile-info-card">
-            <CardHeader className="profile-info-header">
-              <CardTitle className="profile-info-title">
-                <Shield className="h-5 w-5" />
-                <span>Rôle</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="profile-info-value">
-                {userDetails.role === "admin" ? "Administrateur" : "Utilisateur"}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.4 }}
-        >
-          <Card className="profile-info-card">
-            <CardHeader className="profile-info-header">
-              <CardTitle className="profile-info-title">
-                <Calendar className="h-5 w-5" />
-                <span>Membre depuis</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="profile-info-value">{formatDate(userDetails.created_at)}</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Section statistiques */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.5 }}
-        className="mt-8"
-      >
-        <h3 className="text-lg font-semibold mb-4">Mes statistiques</h3>
-        <div className="profile-details-grid">
-          <Card className="profile-info-card">
-            <CardHeader className="profile-info-header">
-              <CardTitle className="profile-info-title">
-                <FileText className="h-5 w-5" />
-                <span>Documents</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {statsLoading ? (
-                <div className="h-8 w-16 animate-pulse rounded-md bg-muted" />
-              ) : (
-                <p className="profile-info-value">{stats.docs ?? "—"}</p>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="truncate">{details.username}</h2>
+                <Badge variant={details.role === "admin" ? "accent" : "neutral"}>{details.role}</Badge>
+              </div>
+              <p className="truncate font-mono text-[13px] text-fg-muted">{details.email}</p>
+              {details.created_at && (
+                <p className="mt-1 font-mono text-[11px] text-fg-muted">membre depuis le {formatDate(details.created_at)}</p>
               )}
-              <p className="text-xs text-muted-foreground mt-1">Total documents</p>
-            </CardContent>
-          </Card>
-
-          <Card className="profile-info-card">
-            <CardHeader className="profile-info-header">
-              <CardTitle className="profile-info-title">
-                <Folder className="h-5 w-5" />
-                <span>Collections</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {statsLoading ? (
-                <div className="h-8 w-16 animate-pulse rounded-md bg-muted" />
-              ) : (
-                <p className="profile-info-value">{stats.collections ?? "—"}</p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">Mes collections</p>
-            </CardContent>
-          </Card>
-
-          <Card className="profile-info-card">
-            <CardHeader className="profile-info-header">
-              <CardTitle className="profile-info-title">
-                <StickyNote className="h-5 w-5" />
-                <span>Notes</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {statsLoading ? (
-                <div className="h-8 w-16 animate-pulse rounded-md bg-muted" />
-              ) : (
-                <p className="profile-info-value">{stats.notes ?? "—"}</p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">Mes notes</p>
-            </CardContent>
-          </Card>
-        </div>
-      </motion.div>
+            </div>
+          </section>
+          <section aria-label="Activité" className="grid grid-cols-3 gap-3">
+            <StatCard label="Docs" value={stats?.docs} loading={!stats} />
+            <StatCard label="Mes notes" value={stats?.notes} loading={!stats} />
+            <StatCard label="Mes collections" value={stats?.collections} loading={!stats} />
+          </section>
+        </>
+      )}
     </div>
   );
 }

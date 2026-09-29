@@ -146,6 +146,18 @@ await section("listes", async () => {
   check("/collections : ligne de la collection", (await p.locator("main li", { hasText: `Flow col ${stamp}` }).count()) === 1);
 });
 
+await section("tableau de bord", async () => {
+  await p.goto(`${BASE}/dashboard`, { waitUntil: "networkidle" });
+  const text = await p.locator("main").innerText();
+  check("dashboard : 3 compteurs, sans faux contenu", ["Docs", "Notes", "Collections"].every((l) => text.includes(l)) && !text.includes("Guide d'intégration API") && !text.includes("Utilisateurs"));
+  check("dashboard : doc récent listé", (await p.locator("main li", { hasText: docTitle }).count()) >= 1);
+  check("dashboard : note épinglée listée", (await p.locator("main li", { hasText: noteText }).count()) >= 1);
+  await p.goto(`${BASE}/profile`, { waitUntil: "networkidle" });
+  check("profil : email affiché", (await p.getByText(email).count()) >= 1);
+  await p.goto(`${BASE}/users`, { waitUntil: "networkidle" });
+  check("/users non admin → réservé aux administrateurs", (await p.getByText("Réservé aux administrateurs").count()) === 1);
+});
+
 await section("clavier", async () => {
   await p.goto(`${BASE}/dashboard`, { waitUntil: "networkidle" });
   const order = [];
