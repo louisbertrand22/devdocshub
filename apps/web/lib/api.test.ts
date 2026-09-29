@@ -22,3 +22,9 @@ test("isUnauthorized : seul un 401 invalide la session", () => {
   assert.equal(isUnauthorized(new ApiError(500, "500")), false);
   assert.equal(isUnauthorized(new TypeError("Failed to fetch")), false);
 });
+
+test("apiFetch accepte un 204 sans corps, même annoncé en JSON", async () => {
+  globalThis.fetch = (async () =>
+    new Response(null, { status: 204, headers: { "content-type": "application/json" } })) as typeof fetch;
+  assert.equal(await apiFetch("/collections/x/docs/y", { method: "DELETE" }, "http://api"), undefined);
+});

@@ -1,5 +1,6 @@
 from pydantic import Field, BaseModel
 from uuid import UUID
+from typing import Optional
 
 class DocCreate(BaseModel):
     slug: str = Field(..., min_length=2, max_length=200)
@@ -20,4 +21,5 @@ class DocMini(BaseModel):
     id: UUID
     slug: str
     title: str
+    tech: Optional[str] = None
     model_config = {"from_attributes": True}

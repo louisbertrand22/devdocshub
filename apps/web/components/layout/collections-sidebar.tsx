@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { SidebarLink } from "./sidebar-link";
 
-// Liste des collections : quand une page de détail de collection existera
 export function CollectionsSidebar() {
   const pathname = usePathname();
   return (
