@@ -1,16 +1,18 @@
-import { PageWrapper } from "@/components/layout/PageWrapper";
+import Link from "next/link";
+import { ProsePage } from "@/components/page/prose-page";
 
 export default function AboutPage() {
   return (
-    <PageWrapper
+    <ProsePage
+      eyebrow="devdocshub"
       title="À propos"
       description="Découvrez DevDocsHub et notre mission"
     >
-      <div className="prose prose-slate max-w-none dark:prose-invert">
-        <section className="space-y-6">
+      <>
+        <section>
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Notre mission</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2>Notre mission</h2>
+            <p>
               DevDocsHub est né d'un constat simple : les développeurs passent trop de temps à chercher 
               et organiser leur documentation technique. Notre mission est de centraliser et simplifier 
               l'accès à toutes vos ressources de développement en un seul endroit.
@@ -18,8 +20,8 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Notre vision</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2>Notre vision</h2>
+            <p>
               Nous imaginons un monde où chaque développeur peut se concentrer sur ce qu'il fait de mieux : 
               créer des applications innovantes. En éliminant les frictions liées à la gestion documentaire, 
               nous permettons aux équipes de gagner en productivité et en efficacité.
@@ -27,11 +29,11 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Ce que nous offrons</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2>Ce que nous offrons</h2>
+            <p>
               DevDocsHub propose une plateforme complète pour :
             </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+            <ul>
               <li>Centraliser votre documentation technique</li>
               <li>Organiser vos notes de développement</li>
               <li>Rechercher rapidement dans vos ressources</li>
@@ -41,8 +43,8 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Notre équipe</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2>Notre équipe</h2>
+            <p>
               DevDocsHub est développé par une équipe passionnée de développeurs qui comprennent 
               les défis quotidiens de la gestion documentaire. Nous utilisons nous-mêmes notre plateforme 
               et l'améliorons continuellement en fonction des besoins de notre communauté.
@@ -50,8 +52,8 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Nos valeurs</h2>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+            <h2>Nos valeurs</h2>
+            <ul>
               <li><strong>Simplicité :</strong> Une interface intuitive et facile à utiliser</li>
               <li><strong>Performance :</strong> Un accès rapide à vos documents</li>
               <li><strong>Sécurité :</strong> Protection de vos données et de votre vie privée</li>
@@ -61,14 +63,14 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Rejoignez-nous</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Vous partagez notre vision ? Découvrez nos <a href="/careers" className="text-primary hover:underline">opportunités de carrière</a> 
-              ou <a href="/contact" className="text-primary hover:underline">contactez-nous</a> pour en savoir plus.
+            <h2>Rejoignez-nous</h2>
+            <p>
+              Vous partagez notre vision ? Découvrez nos <Link href="/careers">opportunités de carrière</Link> 
+              ou <Link href="/contact">contactez-nous</Link> pour en savoir plus.
             </p>
           </div>
         </section>
-      </div>
-    </PageWrapper>
+      </>
+    </ProsePage>
   );
 }

@@ -1,64 +1,65 @@
-import { PageWrapper } from "@/components/layout/PageWrapper";
+import { ProsePage } from "@/components/page/prose-page";
 
 export default function LicensesPage() {
   return (
-    <PageWrapper
+    <ProsePage
+      eyebrow="légal"
       title="Licences open source"
       description="Attributions et licences des bibliothèques tierces utilisées"
     >
-      <div className="prose prose-slate max-w-none dark:prose-invert">
-        <section className="space-y-6">
+      <>
+        <section>
           <div>
-            <p className="text-muted-foreground leading-relaxed">
+            <p>
               DevDocsHub utilise plusieurs bibliothèques et frameworks open source. 
               Nous tenons à remercier les mainteneurs et contributeurs de ces projets.
             </p>
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Frameworks principaux</h2>
+            <h2>Frameworks principaux</h2>
             
-            <div className="space-y-4">
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">Next.js</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+            <div>
+              <div className="card">
+                <h3>Next.js</h3>
+                <p className="meta">
                   Framework React pour la production - MIT License
                 </p>
                 <a 
                   href="https://github.com/vercel/next.js" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
                   https://github.com/vercel/next.js
                 </a>
               </div>
 
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">React</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="card">
+                <h3>React</h3>
+                <p className="meta">
                   Bibliothèque JavaScript pour créer des interfaces utilisateur - MIT License
                 </p>
                 <a 
                   href="https://github.com/facebook/react" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
                   https://github.com/facebook/react
                 </a>
               </div>
 
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">TypeScript</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="card">
+                <h3>TypeScript</h3>
+                <p className="meta">
                   Superset typé de JavaScript - Apache License 2.0
                 </p>
                 <a 
                   href="https://github.com/microsoft/TypeScript" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
                   https://github.com/microsoft/TypeScript
                 </a>
@@ -67,100 +68,130 @@ export default function LicensesPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Bibliothèques UI</h2>
+            <h2>Bibliothèques UI</h2>
             
-            <div className="space-y-4">
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">Radix UI</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+            <div>
+              <div className="card">
+                <h3>Radix UI</h3>
+                <p className="meta">
                   Composants UI accessibles et non stylisés - MIT License
                 </p>
                 <a 
                   href="https://github.com/radix-ui/primitives" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
                   https://github.com/radix-ui/primitives
                 </a>
               </div>
 
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">Lucide React</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="card">
+                <h3>Lucide React</h3>
+                <p className="meta">
                   Icônes SVG élégantes et cohérentes - ISC License
                 </p>
                 <a 
                   href="https://github.com/lucide-icons/lucide" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
                   https://github.com/lucide-icons/lucide
                 </a>
               </div>
 
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">Framer Motion</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  Bibliothèque d'animations pour React - MIT License
+              <div className="card">
+                <h3>Tailwind CSS</h3>
+                <p className="meta">
+                  Framework CSS utilitaire - MIT License
                 </p>
                 <a 
-                  href="https://github.com/framer/motion" 
+                  href="https://github.com/tailwindlabs/tailwindcss" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
-                  https://github.com/framer/motion
+                  https://github.com/tailwindlabs/tailwindcss
+                </a>
+              </div>
+
+              <div className="card">
+                <h3>remark-gfm</h3>
+                <p className="meta">
+                  Tableaux et extensions GitHub pour le markdown - MIT License
+                </p>
+                <a 
+                  href="https://github.com/remarkjs/remark-gfm" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm"
+                >
+                  https://github.com/remarkjs/remark-gfm
+                </a>
+              </div>
+
+              <div className="card">
+                <h3>Geist</h3>
+                <p className="meta">
+                  Polices Geist et Geist Mono - SIL Open Font License 1.1
+                </p>
+                <a 
+                  href="https://github.com/vercel/geist-font" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm"
+                >
+                  https://github.com/vercel/geist-font
                 </a>
               </div>
             </div>
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Utilitaires</h2>
+            <h2>Utilitaires</h2>
             
-            <div className="space-y-4">
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">Zustand</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+            <div>
+              <div className="card">
+                <h3>Zustand</h3>
+                <p className="meta">
                   Gestion d'état simple et évolutive - MIT License
                 </p>
                 <a 
                   href="https://github.com/pmndrs/zustand" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
                   https://github.com/pmndrs/zustand
                 </a>
               </div>
 
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">React Markdown</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="card">
+                <h3>React Markdown</h3>
+                <p className="meta">
                   Composant React pour le rendu Markdown - MIT License
                 </p>
                 <a 
                   href="https://github.com/remarkjs/react-markdown" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
                   https://github.com/remarkjs/react-markdown
                 </a>
               </div>
 
-              <div className="border rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2">Sonner</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="card">
+                <h3>Sonner</h3>
+                <p className="meta">
                   Composant de notification toast pour React - MIT License
                 </p>
                 <a 
                   href="https://github.com/emilkowalski/sonner" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm"
+                  className="text-sm"
                 >
                   https://github.com/emilkowalski/sonner
                 </a>
@@ -169,17 +200,17 @@ export default function LicensesPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Licences complètes</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2>Licences complètes</h2>
+            <p>
               Pour consulter les textes complets des licences de chaque dépendance, veuillez vous référer 
-              au fichier <code className="px-2 py-1 bg-muted rounded">package.json</code> de notre 
+              au fichier <code>package.json</code> de notre 
               dépôt et aux dépôts GitHub respectifs de chaque bibliothèque.
             </p>
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Licence de DevDocsHub</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2>Licence de DevDocsHub</h2>
+            <p>
               Le code source de DevDocsHub est disponible sous licence MIT. Vous êtes libre de l'utiliser, 
               le modifier et le distribuer selon les termes de cette licence.
             </p>
@@ -187,19 +218,19 @@ export default function LicensesPage() {
               href="https://github.com/louisbertrand22/devdocshub" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-primary hover:underline inline-block mt-2"
+             
             >
               Voir le dépôt GitHub
             </a>
           </div>
 
-          <div className="mt-8 pt-6 border-t">
-            <p className="text-sm text-muted-foreground">
+          <div className="mt-8 border-t border-border pt-6">
+            <p className="meta">
               Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
         </section>
-      </div>
-    </PageWrapper>
+      </>
+    </ProsePage>
   );
 }

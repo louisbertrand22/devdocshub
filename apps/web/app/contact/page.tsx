@@ -1,72 +1,75 @@
-import { PageWrapper } from "@/components/layout/PageWrapper";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ProsePage } from "@/components/page/prose-page";
 
 export default function ContactPage() {
   return (
-    <PageWrapper
+    <ProsePage
+      eyebrow="devdocshub"
       title="Contact"
       description="Nous sommes là pour vous aider. N'hésitez pas à nous contacter"
     >
-      <div className="prose prose-slate max-w-none dark:prose-invert">
-        <section className="space-y-6">
+      <>
+        <section>
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Contactez-nous</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2>Contactez-nous</h2>
+            <p>
               Une question, une suggestion ou besoin d'aide ? Notre équipe est à votre écoute. 
               Choisissez le canal qui vous convient le mieux pour nous joindre.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-            <div className="border rounded-lg p-6 bg-white dark:bg-slate-800">
-              <div className="text-3xl mb-3">💬</div>
-              <h3 className="text-xl font-semibold mb-2">Support général</h3>
-              <p className="text-muted-foreground mb-4">
+            <div className="card">
+              <div className="mb-2 text-2xl">💬</div>
+              <h3>Support général</h3>
+              <p>
                 Pour toute question concernant l'utilisation de la plateforme
               </p>
-              <a href="mailto:support@devdocshub.com" className="text-primary hover:underline font-medium">
+              <a href="mailto:support@devdocshub.com">
                 support@devdocshub.com
               </a>
             </div>
 
-            <div className="border rounded-lg p-6 bg-white dark:bg-slate-800">
-              <div className="text-3xl mb-3">🔧</div>
-              <h3 className="text-xl font-semibold mb-2">Support technique</h3>
-              <p className="text-muted-foreground mb-4">
+            <div className="card">
+              <div className="mb-2 text-2xl">🔧</div>
+              <h3>Support technique</h3>
+              <p>
                 Besoin d'aide technique ou vous rencontrez un problème ?
               </p>
-              <a href="mailto:tech@devdocshub.com" className="text-primary hover:underline font-medium">
+              <a href="mailto:tech@devdocshub.com">
                 tech@devdocshub.com
               </a>
             </div>
 
-            <div className="border rounded-lg p-6 bg-white dark:bg-slate-800">
-              <div className="text-3xl mb-3">💼</div>
-              <h3 className="text-xl font-semibold mb-2">Ventes et partenariats</h3>
-              <p className="text-muted-foreground mb-4">
+            <div className="card">
+              <div className="mb-2 text-2xl">💼</div>
+              <h3>Ventes et partenariats</h3>
+              <p>
                 Intéressé par nos offres entreprise ou une collaboration ?
               </p>
-              <a href="mailto:sales@devdocshub.com" className="text-primary hover:underline font-medium">
+              <a href="mailto:sales@devdocshub.com">
                 sales@devdocshub.com
               </a>
             </div>
 
-            <div className="border rounded-lg p-6 bg-white dark:bg-slate-800">
-              <div className="text-3xl mb-3">📰</div>
-              <h3 className="text-xl font-semibold mb-2">Presse et médias</h3>
-              <p className="text-muted-foreground mb-4">
+            <div className="card">
+              <div className="mb-2 text-2xl">📰</div>
+              <h3>Presse et médias</h3>
+              <p>
                 Demandes presse et relations médias
               </p>
-              <a href="mailto:press@devdocshub.com" className="text-primary hover:underline font-medium">
+              <a href="mailto:press@devdocshub.com">
                 press@devdocshub.com
               </a>
             </div>
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Nos bureaux</h2>
-            <div className="border rounded-lg p-6 bg-white dark:bg-slate-800">
-              <h3 className="text-lg font-semibold mb-2">Siège social</h3>
-              <p className="text-muted-foreground">
+            <h2>Nos bureaux</h2>
+            <div className="card">
+              <h3>Siège social</h3>
+              <p>
                 DevDocsHub SAS<br />
                 42 Avenue de la Tech<br />
                 75008 Paris, France
@@ -75,17 +78,17 @@ export default function ContactPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Rejoignez notre communauté</h2>
-            <p className="text-muted-foreground leading-relaxed mb-4">
+            <h2>Rejoignez notre communauté</h2>
+            <p>
               Suivez-nous sur nos réseaux sociaux pour rester informé de nos dernières actualités, 
               fonctionnalités et conseils :
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="not-prose flex flex-wrap gap-2">
               <a 
                 href="https://github.com/louisbertrand22" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "no-underline")}
               >
                 GitHub
               </a>
@@ -93,7 +96,7 @@ export default function ContactPage() {
                 href="https://twitter.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "no-underline")}
               >
                 Twitter
               </a>
@@ -101,7 +104,7 @@ export default function ContactPage() {
                 href="https://www.linkedin.com/in/louis-bertrand222/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "no-underline")}
               >
                 LinkedIn
               </a>
@@ -109,22 +112,22 @@ export default function ContactPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Temps de réponse</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2>Temps de réponse</h2>
+            <p>
               Nous nous efforçons de répondre à toutes les demandes dans les plus brefs délais :
             </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4 mt-3">
+            <ul>
               <li>Support technique : 24-48 heures</li>
               <li>Support général : 48-72 heures</li>
               <li>Demandes commerciales : 2-3 jours ouvrés</li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed mt-3">
+            <p>
               Pour les urgences critiques affectant votre production, merci d'ajouter [URGENT] 
               dans l'objet de votre email.
             </p>
           </div>
         </section>
-      </div>
-    </PageWrapper>
+      </>
+    </ProsePage>
   );
 }
