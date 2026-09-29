@@ -10,3 +10,4 @@ requests==2.32.3
 beautifulsoup4==4.12.3
 pydantic[email]==2.9.2
 psycopg2-binary==2.9.9
+alembic==1.13.3

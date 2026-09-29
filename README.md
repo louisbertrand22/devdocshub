@@ -117,11 +117,27 @@ The API only needs a PostgreSQL URL, so a Supabase project works as the database
    ```
 
    On port 6543 the API automatically disables server-side prepared statements and its own connection pool, which transaction pooling does not support. For another transaction pooler on a different port, set `DATABASE_POOL_MODE=transaction`.
-3. Start the API: on boot it creates the tables and enables Row Level Security on each of them, with no policy. Supabase's REST API (`anon` / `authenticated` roles) therefore sees no rows, while the API, which owns the tables, is unaffected. Connect with the `postgres` user so the API owns what it creates.
+3. Start the API: on boot it runs the database migrations (see below), which create the tables and enable Row Level Security on each of them, with no policy. Supabase's REST API (`anon` / `authenticated` roles) therefore sees no rows, while the API, which owns the tables, is unaffected. Connect with the `postgres` user so the API owns what it creates.
 
 Checks (run inside the API container): `scripts/check_pooler.py` (instructions in the file, with a local PgBouncer) and `scripts/check_rls.py`.
 
-The schema is created with `create_all`, which adds missing tables but never alters existing ones; there are no migrations yet.
+#### 6. Database migrations (Alembic)
+
+The schema is managed by Alembic migrations in `services/api/migrations/versions/`. The API runs `alembic upgrade head` on startup, under a PostgreSQL lock so that several instances starting together don't migrate twice. A database created before Alembic (tables present, no `alembic_version` table) is stamped at revision `0001` without being modified, then receives the later migrations.
+
+Commands, inside the API container (`docker compose exec api …`):
+
+```bash
+alembic revision --autogenerate -m "add tags to docs"   # after changing a model; review the generated file
+alembic upgrade head                                     # apply (also done on API startup)
+alembic downgrade -1                                     # undo the last migration
+alembic check                                            # fails if the models and the database differ
+alembic upgrade head --sql                               # print the SQL instead of running it (e.g. for Supabase's SQL editor)
+```
+
+To write the new migration file into the repository, mount the folder: `docker compose run --rm --no-deps -u "$(id -u):$(id -g)" -v "$PWD/services/api/migrations:/app/migrations" api alembic revision --autogenerate -m "…"`.
+
+Check: `docker compose exec -T api python - < services/api/scripts/check_migrations.py` (empty database, pre-Alembic database, downgrade/upgrade round trip, two concurrent startups).
 
 ---
 

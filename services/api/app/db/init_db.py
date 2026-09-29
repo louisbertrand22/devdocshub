@@ -1,25 +1,36 @@
-from sqlalchemy import text
+from pathlib import Path
 
-from app.db.base import Base
+from alembic import command
+from alembic.config import Config
+from sqlalchemy import inspect
+
 from app.db.session import engine
-from app.models.user import User  # noqa: F401
+
+ALEMBIC_INI = Path(__file__).resolve().parents[2] / "alembic.ini"
+# Révision qui décrit le schéma créé par l'ancien `create_all`
+BASELINE = "0001"
 
 
-def enable_row_level_security():
-    """Active RLS, sans aucune policy, sur toutes nos tables PostgreSQL.
+def alembic_config() -> Config:
+    cfg = Config(str(ALEMBIC_INI))
+    cfg.attributes["configure_logger"] = False  # garder la config de logs d'uvicorn
+    return cfg
 
-    Sur Supabase, le schéma `public` est exposé par l'API REST (rôles `anon`, `authenticated`) :
-    sans RLS, n'importe qui avec la clé anon lirait `users` et ses hash de mots de passe.
-    Le propriétaire des tables (le rôle avec lequel l'API se connecte) n'est pas soumis à RLS,
-    l'API continue donc de tout voir ; les autres rôles ne voient plus rien.
+
+def run_migrations() -> None:
+    """Amène la base à la dernière révision.
+
+    Une base créée avant Alembic (tables présentes, pas de table `alembic_version`) est d'abord
+    tamponnée à la révision de base, sans être modifiée, puis reçoit les migrations suivantes.
     """
-    if engine.dialect.name != "postgresql":
-        return
-    with engine.begin() as conn:
-        for table in Base.metadata.sorted_tables:
-            conn.execute(text(f'ALTER TABLE "{table.name}" ENABLE ROW LEVEL SECURITY'))
+    cfg = alembic_config()
+    with engine.connect() as conn:
+        insp = inspect(conn)
+        legacy = insp.has_table("users") and not insp.has_table("alembic_version")
+    if legacy:
+        command.stamp(cfg, BASELINE)
+    command.upgrade(cfg, "head")
 
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
-    enable_row_level_security()
+    run_migrations()
